@@ -1,12 +1,25 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python
 .venv/
+venv/
 __pycache__/
 *.py[cod]
-.env
-*.sqlite3
-/media/
-/staticfiles/
-*.pem
-github_keys/*
-!github_keys/.gitkeep
 
-/private_docs/
+# Database
+db.sqlite3
+
+# Private files
+media/
+private_docs/
+github_keys/
+
+# Development files
+.vscode/
+aklyte-backup/
+
+# Node
+node_modules/
