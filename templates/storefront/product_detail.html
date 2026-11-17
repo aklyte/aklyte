@@ -1,0 +1,1012 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} — AKLYTE{% endblock %}
+
+{% block content %}
+
+<style>
+/* =========================================
+   AKLYTE PRODUCT DETAIL PAGE
+========================================= */
+
+.product-detail-page {
+    background: #ffffff;
+    color: #172033;
+}
+
+/* BREADCRUMB */
+
+.product-breadcrumb {
+    padding: 22px 0;
+    font-size: 13px;
+    color: #8491a5;
+}
+
+.product-breadcrumb a {
+    color: #2878ff;
+    text-decoration: none;
+}
+
+.product-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+/* PRODUCT OVERVIEW */
+
+.product-overview {
+    padding: 25px 0 65px;
+}
+
+.detail-image-wrapper {
+    background: #f3f6fb;
+    border: 1px solid #e7edf5;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.detail-image {
+    width: 100%;
+    max-height: 470px;
+    object-fit: cover;
+    display: block;
+}
+
+.detail-placeholder {
+    width: 100%;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #08172f, #1b4c91);
+    color: white;
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: 5px;
+    border-radius: 15px;
+}
+
+.detail-category {
+    display: inline-block;
+    background: #edf4ff;
+    color: #2878ff;
+    padding: 7px 13px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+    margin-bottom: 17px;
+}
+
+.detail-title {
+    color: #10203b;
+    font-size: clamp(30px, 4vw, 43px);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -1px;
+    margin-bottom: 18px;
+}
+
+.detail-short-description {
+    color: #718096;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+/* PRICE AND DISCOUNT */
+
+.detail-price-box {
+    margin: 25px 0;
+    padding: 20px;
+    background: #f7f9fc;
+    border: 1px solid #e7edf5;
+    border-radius: 12px;
+}
+
+.detail-price {
+    color: #102d5c;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.detail-original-price {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.detail-original-price del {
+    color: #929eae;
+    font-size: 16px;
+}
+
+.discount-label {
+    background: #e8f7ee;
+    color: #16834a;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.detail-version {
+    display: inline-block;
+    color: #53647c;
+    background: #f3f6fa;
+    padding: 8px 13px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+/* BUTTONS */
+
+.detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.detail-cart-btn {
+    display: inline-block;
+    background: #2878ff;
+    color: white;
+    border: 1px solid #2878ff;
+    border-radius: 8px;
+    padding: 14px 25px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: .25s;
+    cursor: pointer;
+}
+
+.detail-cart-btn:hover {
+    background: #1261e6;
+    border-color: #1261e6;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.detail-note {
+    color: #8995a7;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 15px;
+}
+
+/* SCREENSHOTS */
+
+.screenshot-section {
+    padding: 20px 0 65px;
+}
+
+.screenshot-heading {
+    font-size: 24px;
+    color: #10203b;
+    font-weight: 800;
+    margin-bottom: 25px;
+}
+
+.screenshot-card {
+    background: #f3f6fb;
+    border: 1px solid #e7edf5;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 100%;
+}
+
+.screenshot-card img {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    display: block;
+    transition: .3s;
+}
+
+.screenshot-card:hover img {
+    transform: scale(1.04);
+}
+
+.screenshot-caption {
+    padding: 12px;
+    color: #718096;
+    font-size: 12px;
+}
+
+/* =========================================
+   PRODUCT INFORMATION SECTION
+========================================= */
+
+.detail-information {
+    padding: 55px 0 75px;
+    border-top: 1px solid #e9eef5;
+}
+
+/* Individual information cards */
+
+.detail-section {
+    background: #ffffff;
+    border: 1px solid #e5ebf3;
+    border-radius: 12px;
+    padding: 25px 27px;
+    margin-bottom: 22px;
+    box-shadow: 0 3px 12px rgba(15, 35, 70, 0.04);
+    transition: .25s ease;
+}
+
+.detail-section:hover {
+    border-color: #cbdcf5;
+    box-shadow: 0 6px 18px rgba(15, 35, 70, 0.07);
+}
+
+.detail-section h2,
+.detail-section h3 {
+    color: #102d5c;
+    font-weight: 800;
+    margin-bottom: 17px;
+    padding-bottom: 13px;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.detail-section h2 {
+    font-size: 23px;
+}
+
+.detail-section h3 {
+    font-size: 20px;
+}
+
+.detail-text {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+}
+
+.detail-text p {
+    color: #64748b;
+    line-height: 1.9;
+    margin-bottom: 12px;
+}
+
+.detail-text p:last-child {
+    margin-bottom: 0;
+}
+
+.detail-text ul,
+.detail-text ol {
+    color: #64748b;
+    padding-left: 22px;
+    line-height: 2;
+}
+
+/* INSTALLATION CONTENT */
+
+.installation-content {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+}
+
+.installation-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* TECHNOLOGY SIDEBAR */
+
+.technology-panel {
+    background: #f8faff;
+    border: 1px solid #e5ecf5;
+    border-radius: 13px;
+    padding: 25px;
+    position: sticky;
+    top: 25px;
+}
+
+.technology-panel h3 {
+    color: #142440;
+    font-size: 19px;
+    font-weight: 800;
+    margin-bottom: 23px;
+}
+
+.technology-item {
+    padding: 14px 0;
+    border-bottom: 1px solid #e5ebf3;
+}
+
+.technology-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.technology-label {
+    display: block;
+    color: #8794a7;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.technology-value {
+    color: #253650;
+    font-size: 14px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* =========================================
+   CUSTOMER REVIEWS
+========================================= */
+
+.reviews-section {
+    background: #f7f9fc;
+    padding: 45px 0;
+    border-top: 1px solid #e8edf5;
+}
+
+.reviews-heading {
+    margin-bottom: 20px;
+}
+
+.reviews-heading h2 {
+    color: #10203b;
+    font-size: 27px;
+    font-weight: 800;
+}
+
+.reviews-heading p {
+    color: #718096;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.all-reviews-box {
+    background: #ffffff;
+    border: 1px solid #e2eaf4;
+    border-radius: 12px;
+    padding: 22px 25px;
+    box-shadow: 0 3px 12px rgba(20, 50, 100, 0.03);
+}
+
+.review-summary {
+    padding: 0 0 15px;
+    margin: 0;
+    border: none;
+    background: transparent;
+}
+
+.review-average {
+    color: #10203b;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.review-stars {
+    color: #f5a623;
+    font-size: 17px;
+    letter-spacing: 2px;
+    line-height: 1.5;
+}
+
+.review-count {
+    color: #8794a7;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.review-divider {
+    height: 1px;
+    background: #e9eef5;
+    margin: 14px 0;
+}
+
+.review-card {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 5px 0;
+    margin: 0;
+}
+
+.review-name {
+    color: #142440;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.review-date {
+    color: #94a0b1;
+    font-size: 11px;
+}
+
+.review-title {
+    color: #253650;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 12px;
+}
+
+.review-body {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.65;
+    margin: 7px 0 0;
+}
+
+.no-reviews {
+    text-align: center;
+    padding: 15px 10px 5px;
+}
+
+.no-reviews h5 {
+    color: #142440;
+    font-weight: 800;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.no-reviews p {
+    color: #8794a7;
+    font-size: 13px;
+    margin: 0;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 991px) {
+    .technology-panel {
+        position: static;
+    }
+
+    .detail-placeholder {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-overview {
+        padding: 10px 0 45px;
+    }
+
+    .detail-title {
+        font-size: 30px;
+    }
+
+    .detail-price {
+        font-size: 29px;
+    }
+
+    .detail-cart-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .detail-information {
+        padding: 40px 0 55px;
+    }
+
+    .detail-section {
+        padding: 19px;
+        margin-bottom: 16px;
+    }
+
+    .detail-section h2 {
+        font-size: 21px;
+    }
+
+    .detail-section h3 {
+        font-size: 19px;
+    }
+
+    .reviews-section {
+        padding: 35px 0;
+    }
+
+    .all-reviews-box {
+        padding: 18px;
+    }
+
+    .screenshot-card img {
+        height: 150px;
+    }
+}
+</style>
+
+
+<div class="product-detail-page">
+
+    <div class="container">
+
+        <!-- BREADCRUMB -->
+        <nav class="product-breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span> / </span>
+
+            <a href="{% url 'product_list' %}">Projects</a>
+            <span> / </span>
+
+            <span>{{ product.name }}</span>
+        </nav>
+
+
+        <!-- PRODUCT OVERVIEW -->
+        <section class="product-overview">
+
+            <div class="row g-5 align-items-start">
+
+                <!-- PRODUCT IMAGE -->
+                <div class="col-lg-6">
+
+                    <div class="detail-image-wrapper">
+
+                        {% if product.thumbnail %}
+
+                            <img
+                                class="detail-image"
+                                src="{{ product.thumbnail.url }}"
+                                alt="{{ product.name }}"
+                            >
+
+                        {% else %}
+
+                            <div class="detail-placeholder">
+                                AKLYTE
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRODUCT DETAILS -->
+                <div class="col-lg-6">
+
+                    <span class="detail-category">
+                        {{ product.category.name }}
+                    </span>
+
+                    <h1 class="detail-title">
+                        {{ product.name }}
+                    </h1>
+
+                    <p class="detail-short-description">
+                        {{ product.short_description }}
+                    </p>
+
+
+                    <!-- PRICE AND DISCOUNT -->
+                    <div class="detail-price-box">
+
+                        {% if product.has_discount %}
+
+                            <div class="detail-price">
+                                ₹{{ product.display_price|floatformat:2 }}
+                            </div>
+
+                            <div class="detail-original-price">
+
+                                <del>
+                                    ₹{{ product.price|floatformat:2 }}
+                                </del>
+
+                                <span class="discount-label">
+                                    Discounted Price
+                                </span>
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="detail-price">
+                                ₹{{ product.price|floatformat:2 }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <span class="detail-version">
+                        Version {{ product.version }}
+                    </span>
+
+
+                    <!-- ADD TO CART -->
+                    <div class="detail-actions">
+
+                        {% if request.user.is_authenticated %}
+
+                            <form method="post"
+                                  action="{% url 'cart_add' product.pk %}">
+
+                                {% csrf_token %}
+
+                                <button type="submit"
+                                        class="detail-cart-btn">
+                                    Add to Cart →
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <a
+                                class="detail-cart-btn"
+                                href="{% url 'customer_login' %}?next={{ request.path|urlencode }}"
+                            >
+                                Sign In to Add to Cart →
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                    <p class="detail-note">
+                        Secure checkout and source-code delivery
+                        are handled through the AKLYTE marketplace.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PRODUCT SCREENSHOTS -->
+        {% if screenshots %}
+
+        <section class="screenshot-section">
+
+            <h2 class="screenshot-heading">
+                Project Preview
+            </h2>
+
+            <div class="row g-4">
+
+                {% for shot in screenshots %}
+
+                    <div class="col-6 col-md-4">
+
+                        <div class="screenshot-card">
+
+                            <img
+                                src="{{ shot.image.url }}"
+                                alt="{{ shot.caption|default:product.name }}"
+                                loading="lazy"
+                            >
+
+                            {% if shot.caption %}
+                                <div class="screenshot-caption">
+                                    {{ shot.caption }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- PRODUCT INFORMATION -->
+        <section class="detail-information">
+
+            <div class="row g-5">
+
+                <!-- MAIN INFORMATION -->
+                <div class="col-lg-8">
+
+
+                    <!-- ABOUT THIS PROJECT -->
+                    <section class="detail-section">
+
+                        <h2>About This Project</h2>
+
+                        <div class="detail-text">
+                            {{ product.description|linebreaks }}
+                        </div>
+
+                    </section>
+
+
+                    <!-- KEY FEATURES -->
+                    {% if product.features %}
+
+                    <section class="detail-section">
+
+                        <h3>Key Features</h3>
+
+                        <div class="detail-text">
+                            {{ product.features|linebreaks }}
+                        </div>
+
+                    </section>
+
+                    {% endif %}
+
+
+                    <!-- WHAT'S INCLUDED -->
+                    {% if product.whats_included %}
+
+                    <section class="detail-section">
+
+                        <h3>What's Included</h3>
+
+                        <div class="detail-text">
+                            {{ product.whats_included|linebreaks }}
+                        </div>
+
+                    </section>
+
+                    {% endif %}
+
+
+                    <!-- INSTALLATION INSTRUCTIONS -->
+                    {% if product.installation_instructions %}
+
+                    <section class="detail-section">
+
+                        <h3>Installation Instructions</h3>
+
+                        <div class="installation-content">
+                            {{ product.installation_instructions|linebreaks }}
+                        </div>
+
+                    </section>
+
+                    {% endif %}
+
+
+                    <!-- SUPPORT DETAILS -->
+                    {% if product.support_details %}
+
+                    <section class="detail-section">
+
+                        <h3>Support Details</h3>
+
+                        <div class="detail-text">
+                            {{ product.support_details|linebreaks }}
+                        </div>
+
+                    </section>
+
+                    {% endif %}
+
+
+                    <!-- DOCUMENTATION -->
+                    {% if product.documentation_url %}
+
+                    <section class="detail-section">
+
+                        <h3>Documentation</h3>
+
+                        <a
+                            href="{{ product.documentation_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="detail-cart-btn"
+                        >
+                            View Documentation →
+                        </a>
+
+                    </section>
+
+                    {% endif %}
+
+
+                </div>
+
+
+                <!-- TECHNOLOGY SIDEBAR -->
+                <aside class="col-lg-4">
+
+                    <div class="technology-panel">
+
+                        <h3>Project Information</h3>
+
+
+                        <div class="technology-item">
+
+                            <span class="technology-label">
+                                Languages
+                            </span>
+
+                            <div class="technology-value">
+                                {{ product.languages|default:"To be specified" }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="technology-item">
+
+                            <span class="technology-label">
+                                Frameworks
+                            </span>
+
+                            <div class="technology-value">
+                                {{ product.frameworks|default:"To be specified" }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="technology-item">
+
+                            <span class="technology-label">
+                                Database
+                            </span>
+
+                            <div class="technology-value">
+                                {{ product.database|default:"To be specified" }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="technology-item">
+
+                            <span class="technology-label">
+                                Skill Level
+                            </span>
+
+                            <div class="technology-value">
+                                {{ product.get_skill_level_display|default:product.skill_level|default:"Not specified" }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="technology-item">
+
+                            <span class="technology-label">
+                                Project Version
+                            </span>
+
+                            <div class="technology-value">
+                                {{ product.version }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- CUSTOMER REVIEWS -->
+    <section class="reviews-section" id="customer-reviews">
+
+        <div class="container">
+
+            <div class="reviews-heading">
+                <h2>Customer Reviews</h2>
+                <p>See what customers say about this project.</p>
+            </div>
+
+
+            <!-- SINGLE REVIEW BOX -->
+            <div class="all-reviews-box">
+
+                <!-- REVIEW SUMMARY -->
+                <div class="review-summary">
+
+                    <div class="review-average">
+                        {{ average_rating|default:0|floatformat:1 }}
+                    </div>
+
+                    <div class="review-stars">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= average_rating %}
+                                ★
+                            {% else %}
+                                ☆
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="review-count">
+                        {{ review_count }} review{{ review_count|pluralize }}
+                    </div>
+
+                </div>
+
+
+                <div class="review-divider"></div>
+
+
+                <!-- INDIVIDUAL REVIEWS -->
+                {% for review in reviews %}
+
+                    <article class="review-card">
+
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+
+                            <div>
+                                <div class="review-name">
+                                    {{ review.reviewer_name|default:"AKLYTE Customer" }}
+                                </div>
+
+                                <div class="review-stars">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= review.rating %}
+                                            ★
+                                        {% else %}
+                                            ☆
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <span class="review-date">
+                                {{ review.created_at|date:"d M Y" }}
+                            </span>
+
+                        </div>
+
+
+                        {% if review.title %}
+                            <h3 class="review-title">
+                                {{ review.title }}
+                            </h3>
+                        {% endif %}
+
+
+                        <p class="review-body">
+                            {{ review.body|linebreaksbr }}
+                        </p>
+
+                    </article>
+
+
+                    {% if not forloop.last %}
+                        <div class="review-divider"></div>
+                    {% endif %}
+
+
+                {% empty %}
+
+                    <div class="no-reviews">
+                        <h5>No Reviews Yet</h5>
+                        <p>Reviews for this project will appear here.</p>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

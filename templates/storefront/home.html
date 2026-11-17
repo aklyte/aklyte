@@ -1,0 +1,1221 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}AKLYTE — Software Projects{% endblock %}
+
+{% block content %}
+
+<style>
+/* =========================================
+   AKLYTE HOMEPAGE
+========================================= */
+
+.home-page {
+    color: #172033;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.home-page .container {
+    max-width: 1200px;
+}
+
+/* HERO */
+
+.home-hero {
+    background: linear-gradient(120deg, #07152e, #102d5c);
+    color: #ffffff;
+    padding: 100px 0;
+    position: relative;
+}
+
+.home-hero::before {
+    content: "";
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    background: #2878ff;
+    filter: blur(160px);
+    opacity: .25;
+    top: -150px;
+    right: 5%;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-label {
+    display: inline-block;
+    color: #83b4ff;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 30px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+}
+
+.home-hero h1 {
+    font-size: clamp(38px, 5vw, 64px);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -2px;
+    max-width: 700px;
+}
+
+.home-hero h1 span {
+    color: #65a5ff;
+}
+
+.hero-description {
+    color: #c4d2e8;
+    font-size: 17px;
+    line-height: 1.8;
+    max-width: 570px;
+    margin-top: 22px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.hero-primary {
+    display: inline-block;
+    background: #2878ff;
+    color: white;
+    padding: 14px 26px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: .25s;
+}
+
+.hero-primary:hover {
+    background: #1261e6;
+    color: white;
+    transform: translateY(-3px);
+}
+
+.hero-secondary {
+    color: white;
+    border: 1px solid rgba(255,255,255,.35);
+    padding: 14px 26px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: .25s;
+}
+
+.hero-secondary:hover {
+    background: white;
+    color: #102d5c;
+}
+
+/* CODE WINDOW */
+
+.hero-code {
+    background: #081426;
+    border: 1px solid #29415f;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 25px 70px rgba(0,0,0,.3);
+    margin-top: 20px;
+}
+
+.code-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border-bottom: 1px solid #26374e;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.code-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ff6868;
+}
+
+.code-dot:nth-child(2) {
+    background: #ffc857;
+}
+
+.code-dot:nth-child(3) {
+    background: #45d483;
+}
+
+.code-title {
+    color: #8294ad;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.code-content {
+    font-family: Consolas, monospace;
+    font-size: 13px;
+    line-height: 2;
+    color: #b9c9df;
+    overflow-x: auto;
+}
+
+.code-blue { color: #69aaff; }
+.code-green { color: #77dfac; }
+.code-yellow { color: #ffd479; }
+.code-purple { color: #c5a3ff; }
+
+/* BENEFITS */
+
+.benefits {
+    background: #f7f9fc;
+    border-bottom: 1px solid #e8edf4;
+    padding: 28px 0;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    color: #26354c;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.benefit-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #e8f1ff;
+    color: #2878ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+/* COMMON SECTION */
+
+.home-section {
+    padding: 75px 0;
+}
+
+.section-heading {
+    text-align: center;
+    margin-bottom: 42px;
+}
+
+.section-heading span {
+    color: #2878ff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.section-heading h2 {
+    font-size: 34px;
+    font-weight: 800;
+    margin-top: 10px;
+    color: #10203b;
+}
+
+.section-heading p {
+    color: #718096;
+    max-width: 600px;
+    margin: 12px auto 0;
+    line-height: 1.7;
+}
+
+/* CATEGORIES */
+
+.category-card {
+    display: block;
+    height: 100%;
+    background: #ffffff;
+    border: 1px solid #e6ebf2;
+    border-radius: 13px;
+    padding: 25px 22px;
+    text-decoration: none;
+    color: #172033;
+    transition: .25s;
+}
+
+.category-card:hover {
+    border-color: #2878ff;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(30,80,150,.09);
+    color: #172033;
+}
+
+.category-symbol {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    background: #edf4ff;
+    color: #2878ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 18px;
+}
+
+.category-card strong {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 9px;
+}
+
+.category-card span {
+    color: #2878ff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* PRODUCT SECTIONS */
+
+.product-section {
+    background: #f8faff;
+}
+
+.product-section.white {
+    background: #ffffff;
+}
+
+.product-section .section-heading {
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.product-section .section-heading p {
+    margin-left: 0;
+}
+
+.empty-state {
+    background: white;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 45px 20px;
+    text-align: center;
+    color: #718096;
+}
+
+.home-page .product-card,
+.home-page .card {
+    border: 1px solid #e8edf4;
+    border-radius: 13px;
+    overflow: hidden;
+    transition: .25s;
+}
+
+.home-page .product-card:hover,
+.home-page .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(20,50,100,.09);
+}
+
+/* =========================================
+   TECHNOLOGY SHOWCASE
+========================================= */
+
+.technology-showcase {
+    background: #f7f9fc;
+}
+
+.technology-card {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e5ebf3;
+    border-radius: 12px;
+    transition: .25s;
+}
+
+.technology-card:hover {
+    transform: translateY(-4px);
+    border-color: #2878ff;
+    box-shadow: 0 12px 25px rgba(20,50,100,.07);
+}
+
+.technology-letter {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    background: #edf4ff;
+    color: #2878ff;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.technology-card h4 {
+    color: #172b4d;
+    font-size: 15px;
+    font-weight: 800;
+    margin: 0 0 5px;
+}
+
+.technology-card p {
+    color: #8794a7;
+    font-size: 12px;
+    margin: 0;
+}
+
+/* =========================================
+   WHY CHOOSE AKLYTE
+========================================= */
+
+.why-section {
+    background: #ffffff;
+}
+
+.why-card {
+    height: 100%;
+    padding: 27px 24px;
+    border: 1px solid #e6ebf2;
+    border-radius: 13px;
+    background: #ffffff;
+    transition: .25s;
+}
+
+.why-card:hover {
+    border-color: #2878ff;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(20,50,100,.07);
+}
+
+.why-number {
+    color: #2878ff;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 17px;
+    letter-spacing: 1px;
+}
+
+.why-card h3 {
+    color: #142440;
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 11px;
+}
+
+.why-card p {
+    color: #718096;
+    font-size: 13px;
+    line-height: 1.8;
+    margin: 0;
+}
+
+/* =========================================
+   HOW IT WORKS
+========================================= */
+
+.how-section {
+    background: #f7f9fc;
+}
+
+.how-card {
+    height: 100%;
+    background: #ffffff;
+    border: 1px solid #e4eaf3;
+    border-radius: 13px;
+    padding: 27px 22px;
+    text-align: center;
+    position: relative;
+    transition: .25s;
+}
+
+.how-card:hover {
+    transform: translateY(-5px);
+    border-color: #2878ff;
+    box-shadow: 0 12px 30px rgba(20,50,100,.07);
+}
+
+.how-number {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 19px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eaf2ff;
+    color: #2878ff;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.how-card h3 {
+    color: #142440;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.how-card p {
+    color: #718096;
+    font-size: 13px;
+    line-height: 1.8;
+    margin: 0;
+}
+
+/* =========================================
+   FAQ
+========================================= */
+
+.faq-section {
+    background: #ffffff;
+}
+
+.faq-list {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    background: #ffffff;
+    border: 1px solid #e5ebf3;
+    border-radius: 11px;
+    margin-bottom: 13px;
+    overflow: hidden;
+    transition: .2s;
+}
+
+.faq-item[open] {
+    border-color: #b8d1fa;
+    box-shadow: 0 5px 18px rgba(20,50,100,.05);
+}
+
+.faq-question {
+    padding: 19px 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    color: #172b4d;
+    font-size: 15px;
+    font-weight: 750;
+    list-style: none;
+}
+
+.faq-question::-webkit-details-marker {
+    display: none;
+}
+
+.faq-question::after {
+    content: "+";
+    color: #2878ff;
+    font-size: 23px;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.faq-item[open] .faq-question::after {
+    content: "−";
+}
+
+.faq-answer {
+    padding: 0 22px 19px;
+    color: #718096;
+    font-size: 14px;
+    line-height: 1.85;
+}
+
+.faq-answer a {
+    color: #2878ff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* CTA */
+
+.home-cta {
+    background: linear-gradient(120deg, #0b1c38, #173e78);
+    padding: 65px 25px;
+    border-radius: 18px;
+    text-align: center;
+    color: white;
+    margin-bottom: 75px;
+}
+
+.home-cta h2 {
+    font-size: 34px;
+    font-weight: 800;
+}
+
+.home-cta p {
+    color: #c5d5ed;
+    max-width: 600px;
+    margin: 15px auto 25px;
+    line-height: 1.8;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+    .home-hero {
+        padding: 65px 0;
+    }
+
+    .home-hero h1 {
+        letter-spacing: -1px;
+    }
+
+    .hero-code {
+        margin-top: 40px;
+    }
+
+    .home-section {
+        padding: 55px 0;
+    }
+
+    .section-heading h2 {
+        font-size: 27px;
+    }
+
+    .home-cta h2 {
+        font-size: 27px;
+    }
+
+    .benefit-item {
+        justify-content: flex-start;
+        padding: 8px 15px;
+    }
+
+    .technology-card {
+        padding: 15px;
+    }
+
+    .faq-question {
+        padding: 17px;
+        font-size: 14px;
+    }
+
+    .faq-answer {
+        padding: 0 17px 17px;
+    }
+}
+</style>
+
+<div class="home-page">
+
+    <!-- HERO SECTION -->
+    <section class="home-hero">
+        <div class="container">
+            <div class="row align-items-center g-5">
+
+                <div class="col-lg-7">
+                    <div class="hero-content">
+
+                        <span class="hero-label">
+                            AKLYTE DIGITAL MARKETPLACE
+                        </span>
+
+                        <h1>
+                            Build faster with
+                            <span>ready-to-use software projects.</span>
+                        </h1>
+
+                        <p class="hero-description">
+                            Discover professionally structured source-code
+                            projects, practical applications and developer
+                            resources. Save development time and bring your
+                            ideas to life with AKLYTE.
+                        </p>
+
+                        <div class="hero-buttons">
+                            <a href="{% url 'product_list' %}"
+                               class="hero-primary">
+                                Explore Projects →
+                            </a>
+
+                            <a href="#categories"
+                               class="hero-secondary">
+                                Browse Categories
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="hero-code">
+
+                        <div class="code-header">
+                            <span class="code-dot"></span>
+                            <span class="code-dot"></span>
+                            <span class="code-dot"></span>
+                            <span class="code-title">project.py</span>
+                        </div>
+
+                        <div class="code-content">
+                            <div><span class="code-purple">class</span> <span class="code-yellow">YourNextProject</span>:</div>
+                            <div>&nbsp;&nbsp;<span class="code-blue">def</span> __init__(self):</div>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;self.idea = <span class="code-green">"Something amazing"</span></div>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;self.code = <span class="code-green">"Ready to use"</span></div>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;self.platform = <span class="code-green">"AKLYTE"</span></div>
+                            <br>
+                            <div>&nbsp;&nbsp;<span class="code-blue">def</span> build(self):</div>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-purple">return</span> <span class="code-green">"Start building faster."</span></div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- BENEFITS -->
+    <section class="benefits">
+        <div class="container">
+            <div class="row g-3">
+
+                <div class="col-6 col-lg-3">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">01</div>
+                        <span>Ready-to-use Projects</span>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">02</div>
+                        <span>Source Code Access</span>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">03</div>
+                        <span>Secure Payments</span>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">04</div>
+                        <span>Developer Resources</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="home-section" id="categories">
+        <div class="container">
+
+            <div class="section-heading">
+                <span>Explore AKLYTE</span>
+                <h2>Browse Categories</h2>
+                <p>
+                    Find projects by technology and discover the right
+                    starting point for your next development idea.
+                </p>
+            </div>
+
+            <div class="row g-4">
+
+                {% for category in categories %}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a class="category-card"
+                       href="{% url 'category_detail' category.slug %}">
+
+                        <div class="category-symbol">
+                            {{ category.name|slice:":1"|upper }}
+                        </div>
+
+                        <strong>{{ category.name }}</strong>
+                        <span>Explore projects →</span>
+
+                    </a>
+                </div>
+
+                {% empty %}
+                <div class="col-12">
+                    <div class="empty-state">
+                        Categories will appear here soon.
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURED PROJECTS -->
+    {% if featured %}
+    <section class="home-section product-section">
+        <div class="container">
+
+            <div class="section-heading">
+                <span>Handpicked for you</span>
+                <h2>Featured Projects</h2>
+                <p>
+                    Explore selected projects from the AKLYTE marketplace.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                {% for product in featured %}
+                    {% include "storefront/_product_card.html" %}
+                {% endfor %}
+            </div>
+
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- LATEST PROJECTS -->
+    <section class="home-section product-section white">
+        <div class="container">
+
+            <div class="section-heading">
+                <span>Recently added</span>
+                <h2>Latest Projects</h2>
+                <p>
+                    Discover the latest source-code projects added
+                    to our growing collection.
+                </p>
+            </div>
+
+            <div class="row g-4">
+
+                {% for product in latest %}
+                    {% include "storefront/_product_card.html" %}
+                {% empty %}
+                    <div class="col-12">
+                        <div class="empty-state">
+                            Our catalogue is being prepared.
+                            Please check back soon.
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="{% url 'product_list' %}"
+                   class="hero-primary">
+                    View All Projects →
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- TECHNOLOGY SHOWCASE -->
+    <section class="home-section technology-showcase">
+        <div class="container">
+
+            <div class="section-heading">
+                <span>Explore Technologies</span>
+                <h2>Built With Technologies You Use</h2>
+                <p>
+                    Discover software projects developed using popular
+                    programming languages, frameworks and tools.
+                </p>
+            </div>
+
+            <div class="row g-3">
+
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="technology-card">
+                        <div class="technology-letter">Py</div>
+                        <div>
+                            <h4>Python</h4>
+                            <p>Programming Language</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="technology-card">
+                        <div class="technology-letter">Dj</div>
+                        <div>
+                            <h4>Django</h4>
+                            <p>Python Web Framework</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="technology-card">
+                        <div class="technology-letter">Re</div>
+                        <div>
+                            <h4>React.js</h4>
+                            <p>Frontend Library</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="technology-card">
+                        <div class="technology-letter">N</div>
+                        <div>
+                            <h4>Node.js</h4>
+                            <p>JavaScript Runtime</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="technology-card">
+                        <div class="technology-letter">Ex</div>
+                        <div>
+                            <h4>Express.js</h4>
+                            <p>Backend Framework</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="technology-card">
+                        <div class="technology-letter">M</div>
+                        <div>
+                            <h4>MongoDB</h4>
+                            <p>NoSQL Database</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="technology-card">
+                        <div class="technology-letter">ML</div>
+                        <div>
+                            <h4>AI & Machine Learning</h4>
+                            <p>Intelligent Applications</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="technology-card">
+                        <div class="technology-letter">SQL</div>
+                        <div>
+                            <h4>MySQL</h4>
+                            <p>Relational Database</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- WHY CHOOSE AKLYTE -->
+    <section class="home-section why-section">
+        <div class="container">
+
+            <div class="section-heading">
+                <span>Why AKLYTE</span>
+                <h2>Why Choose AKLYTE?</h2>
+                <p>
+                    A convenient marketplace for discovering and purchasing
+                    ready-to-use software source-code projects.
+                </p>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="why-card">
+                        <div class="why-number">01 / SOURCE CODE</div>
+                        <h3>Direct Repository Access</h3>
+                        <p>
+                            Receive access to the specific private GitHub
+                            repository associated with your purchased project.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="why-card">
+                        <div class="why-number">02 / CONVENIENCE</div>
+                        <h3>Save Development Time</h3>
+                        <p>
+                            Start with an existing project structure and
+                            build on top of the provided source code.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="why-card">
+                        <div class="why-number">03 / PAYMENTS</div>
+                        <h3>Secure Checkout</h3>
+                        <p>
+                            Complete purchases through the marketplace's
+                            integrated payment process.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="why-card">
+                        <div class="why-number">04 / DOCUMENTATION</div>
+                        <h3>Installation Guidance</h3>
+                        <p>
+                            Find project descriptions, setup instructions
+                            and available documentation for your purchases.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="why-card">
+                        <div class="why-number">05 / ACCOUNT</div>
+                        <h3>Purchase Management</h3>
+                        <p>
+                            Access your orders and check repository delivery
+                            status from your AKLYTE customer account.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="why-card">
+                        <div class="why-number">06 / SUPPORT</div>
+                        <h3>Customer Support</h3>
+                        <p>
+                            Contact the AKLYTE support team for assistance
+                            with purchased projects and installation.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="home-section how-section">
+        <div class="container">
+
+            <div class="section-heading">
+                <span>Simple Process</span>
+                <h2>How It Works</h2>
+                <p>
+                    Get your purchased software project in four
+                    straightforward steps.
+                </p>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-6 col-lg-3">
+                    <div class="how-card">
+                        <div class="how-number">01</div>
+                        <h3>Browse Projects</h3>
+                        <p>
+                            Explore the marketplace and choose a project
+                            that matches your requirements.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <div class="how-card">
+                        <div class="how-number">02</div>
+                        <h3>Purchase</h3>
+                        <p>
+                            Add your selected project to the cart and
+                            complete the secure checkout process.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <div class="how-card">
+                        <div class="how-number">03</div>
+                        <h3>Connect GitHub</h3>
+                        <p>
+                            Connect your GitHub account to AKLYTE so
+                            repository access can be provided.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <div class="how-card">
+                        <div class="how-number">04</div>
+                        <h3>Clone Your Project</h3>
+                        <p>
+                            Accept the repository invitation and clone
+                            your purchased project to your computer.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FREQUENTLY ASKED QUESTIONS -->
+    <section class="home-section faq-section">
+        <div class="container">
+
+            <div class="section-heading">
+                <span>Need Help?</span>
+                <h2>Frequently Asked Questions</h2>
+                <p>
+                    Find answers to common questions about purchasing,
+                    payments and GitHub source-code delivery.
+                </p>
+            </div>
+
+            <div class="faq-list">
+
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        What do I receive after purchasing a project?
+                    </summary>
+                    <div class="faq-answer">
+                        You receive access to the specific private GitHub
+                        repository associated with your purchased project,
+                        subject to successful payment and GitHub account
+                        connection.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        How do I access my purchased source code?
+                    </summary>
+                    <div class="faq-answer">
+                        Connect your GitHub account to AKLYTE. After
+                        successful payment, an invitation is sent to your
+                        connected GitHub account. Accept the invitation
+                        to access the repository.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        Will I get access to all repositories in the organization?
+                    </summary>
+                    <div class="faq-answer">
+                        No. Repository access is provided for the specific
+                        project you purchased. Other AKLYTE organization
+                        repositories are not included in that purchase.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        Do I need a GitHub account?
+                    </summary>
+                    <div class="faq-answer">
+                        Yes. You need a GitHub account connected to your
+                        AKLYTE customer account to receive private
+                        repository invitations.
+                        <a href="https://github.com/signup"
+                           target="_blank"
+                           rel="noopener noreferrer">Create a GitHub account</a>.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        How can I download the project?
+                    </summary>
+                    <div class="faq-answer">
+                        After accepting the GitHub repository invitation,
+                        you can clone the repository using Git or download
+                        the source code from GitHub.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        Are installation instructions provided?
+                    </summary>
+                    <div class="faq-answer">
+                        Installation instructions and documentation are
+                        provided where available on the individual
+                        product detail page.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        What payment methods are supported?
+                    </summary>
+                    <div class="faq-answer">
+                        Available payment methods are displayed during
+                        checkout through the integrated payment gateway.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        What should I do if I do not receive my GitHub invitation?
+                    </summary>
+                    <div class="faq-answer">
+                        Check your GitHub notifications and registered
+                        email address. You can also visit the GitHub
+                        Access section in your AKLYTE account or contact
+                        customer support.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        How can I contact AKLYTE support?
+                    </summary>
+                    <div class="faq-answer">
+                        Sign in to your AKLYTE account and use the
+                        Help & Support section to submit a support request.
+                    </div>
+                </details>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="container">
+        <div class="home-cta">
+
+            <h2>Have an idea? Start building today.</h2>
+
+            <p>
+                Explore practical software projects and get access to
+                source code that helps you develop, learn and build faster.
+            </p>
+
+            <a href="{% url 'product_list' %}"
+               class="hero-primary">
+                Explore AKLYTE Projects →
+            </a>
+
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}

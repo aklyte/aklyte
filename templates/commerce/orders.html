@@ -1,0 +1,427 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Orders — AKLYTE{% endblock %}
+
+{% block content %}
+
+<style>
+/* =================================
+   AKLYTE MY ORDERS PAGE
+================================= */
+
+.orders-page {
+    background: #f7f9fc;
+    min-height: 75vh;
+    padding-bottom: 75px;
+}
+
+/* HEADER */
+
+.orders-hero {
+    background: linear-gradient(120deg, #08172f, #153d76);
+    padding: 50px 0;
+    color: #ffffff;
+}
+
+.orders-hero h1 {
+    font-size: 35px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.orders-hero p {
+    color: #c4d2e8;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* CONTENT */
+
+.orders-content {
+    padding-top: 40px;
+}
+
+.orders-breadcrumb {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 28px;
+}
+
+.orders-breadcrumb a {
+    color: #2878ff;
+    text-decoration: none;
+}
+
+.orders-section-title {
+    color: #142440;
+    font-size: 21px;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+/* ORDER CARD */
+
+.order-card {
+    background: #ffffff;
+    border: 1px solid #e6edf5;
+    border-radius: 12px;
+    padding: 23px;
+    margin-bottom: 16px;
+    transition: .25s;
+}
+
+.order-card:hover {
+    border-color: #c5d9fb;
+    box-shadow: 0 8px 22px rgba(20, 50, 100, .06);
+    transform: translateY(-2px);
+}
+
+.order-card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.order-label {
+    display: block;
+    color: #94a0b1;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 7px;
+}
+
+.order-number {
+    color: #142440;
+    font-size: 16px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.order-number:hover {
+    color: #2878ff;
+}
+
+.order-date {
+    color: #8794a7;
+    font-size: 12px;
+    margin-top: 7px;
+}
+
+/* STATUS BADGES */
+
+.order-status {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .3px;
+}
+
+.status-pending {
+    background: #fff4dc;
+    color: #a66a00;
+}
+
+.status-paid {
+    background: #e5f7ed;
+    color: #16834a;
+}
+
+.status-processing {
+    background: #eaf2ff;
+    color: #2165c5;
+}
+
+.status-completed {
+    background: #e5f7ed;
+    color: #16834a;
+}
+
+.status-cancelled {
+    background: #fff0f0;
+    color: #c13d3d;
+}
+
+.status-default {
+    background: #eef1f5;
+    color: #596579;
+}
+
+/* ORDER AMOUNT */
+
+.order-amount {
+    color: #102d5c;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+/* VIEW BUTTON */
+
+.order-view-btn {
+    display: inline-block;
+    background: #edf4ff;
+    border: 1px solid #d8e7ff;
+    color: #2878ff;
+    padding: 10px 17px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: .2s;
+}
+
+.order-view-btn:hover {
+    background: #2878ff;
+    color: #ffffff;
+    border-color: #2878ff;
+}
+
+/* EMPTY STATE */
+
+.empty-orders {
+    background: #ffffff;
+    border: 1px solid #e5ecf5;
+    border-radius: 14px;
+    padding: 65px 20px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(20, 50, 100, .03);
+}
+
+.empty-orders-icon {
+    width: 75px;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #edf4ff;
+    color: #2878ff;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    font-size: 29px;
+    font-weight: 800;
+}
+
+.empty-orders h2 {
+    color: #142440;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.empty-orders p {
+    color: #8794a7;
+    font-size: 14px;
+    margin: 10px 0 24px;
+}
+
+.empty-orders-btn {
+    display: inline-block;
+    background: #2878ff;
+    color: #ffffff;
+    padding: 12px 23px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.empty-orders-btn:hover {
+    background: #1261e6;
+    color: white;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+    .orders-hero {
+        padding: 40px 0;
+    }
+
+    .orders-hero h1 {
+        font-size: 29px;
+    }
+
+    .orders-content {
+        padding-top: 25px;
+    }
+
+    .order-card {
+        padding: 18px;
+    }
+
+    .order-card-content {
+        align-items: flex-start;
+    }
+
+    .order-view-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+
+
+<div class="orders-page">
+
+    <!-- PAGE HEADER -->
+    <section class="orders-hero">
+        <div class="container">
+
+            <h1>My Orders</h1>
+
+            <p>
+                Track your purchases and access your project orders.
+            </p>
+
+        </div>
+    </section>
+
+
+    <div class="container orders-content">
+
+        <!-- BREADCRUMB -->
+        <div class="orders-breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span> / </span>
+            <a href="{% url 'customer_dashboard' %}">My Account</a>
+            <span> / </span>
+            <span>My Orders</span>
+        </div>
+
+
+        <h2 class="orders-section-title">
+            Order History
+        </h2>
+
+
+        <!-- ORDER LIST -->
+        {% for order in orders %}
+
+            <article class="order-card">
+
+                <div class="order-card-content">
+
+
+                    <!-- ORDER NUMBER AND DATE -->
+                    <div>
+
+                        <span class="order-label">
+                            Order Number
+                        </span>
+
+                        <a
+                            href="{% url 'order_detail' order.order_number %}"
+                            class="order-number"
+                        >
+                            {{ order.order_number }}
+                        </a>
+
+                        <div class="order-date">
+                            {{ order.created_at|date:"d M Y, h:i A" }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- ORDER STATUS -->
+                    <div>
+
+                        <span class="order-label">
+                            Order Status
+                        </span>
+
+                        {% with status=order.status|lower %}
+
+                            <span class="order-status
+                                {% if status == 'pending' or status == 'pending_payment' %}
+                                    status-pending
+                                {% elif status == 'paid' %}
+                                    status-paid
+                                {% elif status == 'processing' %}
+                                    status-processing
+                                {% elif status == 'completed' or status == 'delivered' %}
+                                    status-completed
+                                {% elif status == 'cancelled' or status == 'failed' %}
+                                    status-cancelled
+                                {% else %}
+                                    status-default
+                                {% endif %}
+                            ">
+                                {{ order.get_status_display }}
+                            </span>
+
+                        {% endwith %}
+
+                    </div>
+
+
+                    <!-- ORDER TOTAL -->
+                    <div>
+
+                        <span class="order-label">
+                            Order Total
+                        </span>
+
+                        <div class="order-amount">
+                            ₹{{ order.total|floatformat:2 }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- VIEW ORDER -->
+                    <div>
+
+                        <a
+                            href="{% url 'order_detail' order.order_number %}"
+                            class="order-view-btn"
+                        >
+                            View Order →
+                        </a>
+
+                    </div>
+
+
+                </div>
+
+            </article>
+
+        {% empty %}
+
+
+            <!-- EMPTY ORDERS -->
+            <div class="empty-orders">
+
+                <div class="empty-orders-icon">
+                    +
+                </div>
+
+                <h2>No Orders Yet</h2>
+
+                <p>
+                    You haven't placed any orders yet.
+                    Explore our software projects and find something useful.
+                </p>
+
+                <a
+                    href="{% url 'product_list' %}"
+                    class="empty-orders-btn"
+                >
+                    Explore Projects →
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

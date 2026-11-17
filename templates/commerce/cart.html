@@ -1,0 +1,633 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Shopping Cart — AKLYTE{% endblock %}
+
+{% block content %}
+
+<style>
+/* =================================
+   AKLYTE SHOPPING CART
+================================= */
+
+.cart-page {
+    background: #f7f9fc;
+    min-height: 75vh;
+    padding-bottom: 75px;
+}
+
+/* HEADER */
+
+.cart-hero {
+    background: linear-gradient(120deg, #08172f, #153d76);
+    padding: 55px 0;
+    color: white;
+}
+
+.cart-hero h1 {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.cart-hero p {
+    color: #c4d2e8;
+    margin: 0;
+    font-size: 15px;
+}
+
+/* BREADCRUMB */
+
+.cart-breadcrumb {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 28px;
+}
+
+.cart-breadcrumb a {
+    color: #2878ff;
+    text-decoration: none;
+}
+
+/* CART CONTENT */
+
+.cart-content {
+    padding-top: 40px;
+}
+
+.cart-section-title {
+    font-size: 21px;
+    color: #142440;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+/* MESSAGES */
+
+.cart-alert {
+    background: #eaf2ff;
+    border: 1px solid #cfe0ff;
+    color: #24569a;
+    border-radius: 8px;
+    padding: 13px 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+/* CART ITEM */
+
+.cart-item {
+    background: #ffffff;
+    border: 1px solid #e6edf5;
+    border-radius: 12px;
+    padding: 23px;
+    margin-bottom: 16px;
+    transition: .25s;
+}
+
+.cart-item:hover {
+    border-color: #c5d9fb;
+    box-shadow: 0 8px 22px rgba(20, 50, 100, .05);
+}
+
+.cart-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.cart-product-name {
+    color: #142440;
+    font-size: 17px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.cart-product-name:hover {
+    color: #2878ff;
+}
+
+.cart-category {
+    display: block;
+    color: #8794a7;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.cart-item-price {
+    color: #102d5c;
+    font-size: 16px;
+    font-weight: 800;
+    margin-top: 14px;
+}
+
+.cart-each-label {
+    color: #8794a7;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* QUANTITY AND ACTIONS */
+
+.cart-item-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    border-top: 1px solid #edf1f6;
+    margin-top: 20px;
+    padding-top: 18px;
+}
+
+.cart-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.cart-quantity-input {
+    width: 75px;
+    height: 36px;
+    border: 1px solid #dce4ef;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.cart-quantity-input:focus {
+    border-color: #2878ff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(40,120,255,.1);
+}
+
+.cart-update-btn {
+    background: #edf4ff;
+    color: #2878ff;
+    border: 1px solid #d8e7ff;
+    border-radius: 6px;
+    padding: 8px 13px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.cart-update-btn:hover {
+    background: #2878ff;
+    color: white;
+}
+
+.cart-remove-btn {
+    background: #fff2f2;
+    color: #d14343;
+    border: 1px solid #f5d7d7;
+    border-radius: 6px;
+    padding: 8px 13px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.cart-remove-btn:hover {
+    background: #d14343;
+    color: white;
+}
+
+.cart-line-total {
+    color: #102d5c;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+/* ORDER SUMMARY */
+
+.order-summary {
+    background: #ffffff;
+    border: 1px solid #e5ecf5;
+    border-radius: 13px;
+    padding: 25px;
+    position: sticky;
+    top: 25px;
+    box-shadow: 0 5px 20px rgba(20, 50, 100, .04);
+}
+
+.summary-title {
+    color: #142440;
+    font-size: 19px;
+    font-weight: 800;
+    margin-bottom: 22px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #718096;
+    font-size: 14px;
+    margin: 16px 0;
+}
+
+.summary-row strong {
+    color: #142440;
+    font-size: 15px;
+}
+
+.summary-divider {
+    border-top: 1px solid #e8edf5;
+    margin: 20px 0;
+}
+
+.summary-total {
+    color: #102d5c;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.summary-note {
+    color: #8794a7;
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 18px 0;
+}
+
+/* CHECKOUT BUTTON */
+
+.checkout-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #2878ff;
+    color: white;
+    border: 1px solid #2878ff;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: .25s;
+}
+
+.checkout-btn:hover {
+    background: #1261e6;
+    border-color: #1261e6;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.continue-shopping {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #2878ff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.continue-shopping:hover {
+    color: #1261e6;
+}
+
+/* EMPTY CART */
+
+.empty-cart {
+    background: #ffffff;
+    border: 1px solid #e5ecf5;
+    border-radius: 14px;
+    padding: 65px 20px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(20, 50, 100, .03);
+}
+
+.empty-cart-icon {
+    width: 75px;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: #edf4ff;
+    color: #2878ff;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.empty-cart h2 {
+    color: #142440;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.empty-cart p {
+    color: #8794a7;
+    font-size: 14px;
+    margin: 12px 0 25px;
+}
+
+.empty-cart-btn {
+    display: inline-block;
+    background: #2878ff;
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.empty-cart-btn:hover {
+    background: #1261e6;
+    color: white;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 991px) {
+    .order-summary {
+        position: static;
+    }
+}
+
+@media (max-width: 576px) {
+    .cart-hero {
+        padding: 40px 0;
+    }
+
+    .cart-hero h1 {
+        font-size: 29px;
+    }
+
+    .cart-content {
+        padding-top: 25px;
+    }
+
+    .cart-item {
+        padding: 17px;
+    }
+
+    .cart-item-bottom {
+        align-items: flex-start;
+    }
+
+    .cart-actions {
+        width: 100%;
+    }
+
+    .cart-line-total {
+        font-size: 17px;
+    }
+
+    .order-summary {
+        padding: 20px;
+    }
+}
+</style>
+
+
+<div class="cart-page">
+
+    <!-- CART HEADER -->
+    <section class="cart-hero">
+        <div class="container">
+
+            <h1>Your Shopping Cart</h1>
+
+            <p>
+                Review your selected projects before proceeding to checkout.
+            </p>
+
+        </div>
+    </section>
+
+
+    <div class="container cart-content">
+
+        <!-- BREADCRUMB -->
+        <div class="cart-breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span> / </span>
+            <span>Shopping Cart</span>
+        </div>
+
+
+        <!-- DJANGO MESSAGES -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="cart-alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+
+        {% if items %}
+
+            <div class="row g-4">
+
+                <!-- CART ITEMS -->
+                <div class="col-lg-8">
+
+                    <h2 class="cart-section-title">
+                        Cart Items
+                    </h2>
+
+
+                    {% for item in items %}
+
+                        <article class="cart-item">
+
+                            <div class="cart-item-top">
+
+                                <div>
+
+                                    <h3 class="mb-0">
+                                        <a
+                                            href="{{ item.product.get_absolute_url }}"
+                                            class="cart-product-name"
+                                        >
+                                            {{ item.product.name }}
+                                        </a>
+                                    </h3>
+
+                                    <span class="cart-category">
+                                        {{ item.product.category.name }}
+                                    </span>
+
+                                    <div class="cart-item-price">
+                                        ₹{{ item.product.display_price|floatformat:2 }}
+                                        <span class="cart-each-label">
+                                            / each
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="cart-item-bottom">
+
+                                <!-- QUANTITY AND ACTIONS -->
+                                <div class="cart-actions">
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'cart_update' item.pk %}"
+                                        class="d-flex align-items-center gap-2"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <input
+                                            class="cart-quantity-input"
+                                            type="number"
+                                            min="1"
+                                            max="10"
+                                            name="quantity"
+                                            value="{{ item.quantity }}"
+                                            aria-label="Quantity"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="cart-update-btn"
+                                        >
+                                            Update
+                                        </button>
+
+                                    </form>
+
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'cart_remove' item.pk %}"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="cart-remove-btn"
+                                        >
+                                            Remove
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+
+                                <!-- LINE TOTAL -->
+                                <div class="cart-line-total">
+                                    ₹{{ item.line_total|floatformat:2 }}
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                    <a
+                        href="{% url 'product_list' %}"
+                        class="continue-shopping"
+                    >
+                        ← Continue Shopping
+                    </a>
+
+                </div>
+
+
+                <!-- ORDER SUMMARY -->
+                <div class="col-lg-4">
+
+                    <div class="order-summary">
+
+                        <h2 class="summary-title">
+                            Order Summary
+                        </h2>
+
+
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+
+                            <strong>
+                                ₹{{ cart.subtotal|floatformat:2 }}
+                            </strong>
+                        </div>
+
+
+                        <div class="summary-divider"></div>
+
+
+                        <div class="summary-row">
+                            <strong>Order Total</strong>
+
+                            <span class="summary-total">
+                                ₹{{ cart.subtotal|floatformat:2 }}
+                            </span>
+                        </div>
+
+
+                        <p class="summary-note">
+                            Taxes, if applicable, will be calculated
+                            during the payment phase.
+                        </p>
+
+
+                        <a
+                            href="{% url 'checkout_review' %}"
+                            class="checkout-btn"
+                        >
+                            Continue to Checkout →
+                        </a>
+
+
+                        <a
+                            href="{% url 'product_list' %}"
+                            class="continue-shopping"
+                        >
+                            Continue Shopping
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        {% else %}
+
+            <!-- EMPTY CART -->
+            <div class="empty-cart">
+
+                <div class="empty-cart-icon">
+                    +
+                </div>
+
+                <h2>Your Cart Is Empty</h2>
+
+                <p>
+                    You haven't added any projects to your cart yet.
+                    Explore our collection and find your next project.
+                </p>
+
+                <a
+                    href="{% url 'product_list' %}"
+                    class="empty-cart-btn"
+                >
+                    Explore Projects →
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

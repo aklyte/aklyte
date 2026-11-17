@@ -1,0 +1,10 @@
+Django>=5.2,<5.3
+django-environ>=0.12,<0.13
+Pillow>=11.0
+psycopg[binary]>=3.2
+
+requests>=2.32,<3
+PyJWT[crypto]>=2.10,<3
+
+# Verify Google OpenID Connect ID tokens for customer sign-in
+google-auth>=2.35,<3

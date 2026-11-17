@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.py[cod]
+.env
+*.sqlite3
+/media/
+/staticfiles/
+*.pem
+github_keys/*
+!github_keys/.gitkeep
+
+/private_docs/

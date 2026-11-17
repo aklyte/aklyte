@@ -1,0 +1,243 @@
+
+{% extends "accounts/base.html" %}
+
+{% block title %}Help & Support — AKLYTE{% endblock %}
+
+{% block account_heading %}Help & Support{% endblock %}
+
+{% block account_content %}
+
+<style>
+.support-intro {
+    color: #71829a;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 22px;
+}
+
+.support-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.support-header h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #102b50;
+    margin: 0;
+}
+
+.support-create-btn {
+    display: inline-block;
+    padding: 11px 17px;
+    background: #1769e0;
+    color: white !important;
+    text-decoration: none !important;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    transition: .2s;
+}
+
+.support-create-btn:hover {
+    background: #1054ba;
+}
+
+.ticket-card {
+    display: block;
+    background: white;
+    border: 1px solid #e1e9f4;
+    border-radius: 11px;
+    padding: 19px;
+    margin-bottom: 13px;
+    text-decoration: none !important;
+    transition: .2s ease;
+}
+
+.ticket-card:hover {
+    border-color: #1769e0;
+    box-shadow: 0 5px 18px rgba(16, 42, 80, .06);
+    transform: translateY(-2px);
+}
+
+.ticket-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.ticket-title {
+    color: #102b50;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
+
+.ticket-number {
+    color: #1769e0;
+}
+
+.ticket-date {
+    color: #8292a9;
+    font-size: 12px;
+}
+
+.ticket-status {
+    padding: 6px 11px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.ticket-open {
+    background: #eaf2ff;
+    color: #1769e0;
+}
+
+.ticket-pending {
+    background: #fff3d4;
+    color: #936000;
+}
+
+.ticket-closed {
+    background: #eaf8f0;
+    color: #087443;
+}
+
+.ticket-default {
+    background: #f0f2f5;
+    color: #596579;
+}
+
+.ticket-view {
+    display: block;
+    margin-top: 13px;
+    padding-top: 12px;
+    border-top: 1px solid #edf1f7;
+    color: #1769e0;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.support-empty {
+    text-align: center;
+    padding: 40px 20px;
+    background: #f7faff;
+    border: 1px dashed #cbd9ec;
+    border-radius: 12px;
+}
+
+.support-empty h3 {
+    color: #102b50;
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.support-empty p {
+    color: #71829a;
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 18px;
+}
+
+@media(max-width: 500px) {
+    .support-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .ticket-card {
+        padding: 15px;
+    }
+}
+</style>
+
+<!-- INTRODUCTION -->
+<p class="support-intro">
+    Need help with an order, payment, GitHub repository access
+    or another issue? Submit a support ticket and track your
+    conversation here.
+</p>
+
+<!-- HEADER -->
+<div class="support-header">
+
+    <h2>Your Support Tickets</h2>
+
+    <a href="{% url 'support_ticket_create' %}"
+       class="support-create-btn">
+        Contact Support
+    </a>
+
+</div>
+
+<!-- TICKET LIST -->
+{% for ticket in tickets %}
+
+<a href="{% url 'support_ticket_detail' ticket.pk %}"
+   class="ticket-card">
+
+    <div class="ticket-top">
+
+        <div>
+            <div class="ticket-title">
+                <span class="ticket-number">#{{ ticket.pk }}</span>
+                — {{ ticket.subject }}
+            </div>
+
+            <div class="ticket-date">
+                Submitted on
+                {{ ticket.created_at|date:"d M Y, H:i" }}
+            </div>
+        </div>
+
+        <span class="ticket-status
+            {% if ticket.status == 'open' %}
+                ticket-open
+            {% elif ticket.status == 'pending' %}
+                ticket-pending
+            {% elif ticket.status == 'closed' %}
+                ticket-closed
+            {% else %}
+                ticket-default
+            {% endif %}">
+            {{ ticket.get_status_display }}
+        </span>
+
+    </div>
+
+    <div class="ticket-view">
+        View Ticket Details →
+    </div>
+
+</a>
+
+{% empty %}
+
+<div class="support-empty">
+
+    <h3>No Support Tickets Yet</h3>
+
+    <p>
+        You haven't submitted any support requests.
+        If you need assistance with your purchases or account,
+        contact the AKLYTE support team.
+    </p>
+
+    <a href="{% url 'support_ticket_create' %}"
+       class="support-create-btn">
+        Create Your First Ticket
+    </a>
+
+</div>
+
+{% endfor %}
+
+{% endblock %}

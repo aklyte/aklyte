@@ -1,0 +1,585 @@
+{% extends "management/base.html" %}
+
+{% block title %}Payments — AKLYTE{% endblock %}
+
+{% block content %}
+
+<style>
+    .payments-page {
+        width: 100%;
+    }
+
+    /* PAGE HEADER */
+
+    .page-title {
+        margin-bottom: 28px;
+    }
+
+    .page-title h1 {
+        color: #0b1f3a;
+        font-size: 32px;
+        font-weight: 850;
+        margin-bottom: 7px;
+    }
+
+    .page-title p {
+        color: #718096;
+        font-size: 16px;
+        margin: 0;
+    }
+
+    /* SUMMARY CARDS */
+
+    .payment-stat {
+        position: relative;
+        height: 100%;
+        min-height: 125px;
+        padding: 23px;
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+    }
+
+    .payment-stat::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: #1769e0;
+    }
+
+    .payment-stat.captured::after {
+        background: #16a34a;
+    }
+
+    .payment-stat.failed::after {
+        background: #dc2626;
+    }
+
+    .payment-stat.pending::after {
+        background: #d97706;
+    }
+
+    .stat-label {
+        display: block;
+        margin-bottom: 13px;
+        color: #718096;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .stat-value {
+        display: block;
+        color: #0b1f3a;
+        font-size: 30px;
+        font-weight: 850;
+        line-height: 1.2;
+    }
+
+    /* FILTER PANEL */
+
+    .filter-panel {
+        padding: 22px;
+        margin-bottom: 25px;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+    }
+
+    .filter-title {
+        margin-bottom: 17px;
+        color: #0b1f3a;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .filter-panel .form-control,
+    .filter-panel .form-select {
+        min-height: 45px;
+        border: 1px solid #dce5f0;
+        border-radius: 8px;
+        color: #334155;
+        font-size: 14px;
+    }
+
+    .filter-panel .form-control:focus,
+    .filter-panel .form-select:focus {
+        border-color: #1769e0;
+        box-shadow: 0 0 0 3px rgba(23, 105, 224, 0.10);
+    }
+
+    .search-btn,
+    .clear-btn {
+        min-height: 45px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 750;
+    }
+
+    .search-btn {
+        background: #1769e0;
+        border: 1px solid #1769e0;
+        color: #ffffff;
+    }
+
+    .search-btn:hover {
+        background: #1256bd;
+        border-color: #1256bd;
+        color: #ffffff;
+    }
+
+    .clear-btn {
+        background: #ffffff;
+        border: 1px solid #dce5f0;
+        color: #475569;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .clear-btn:hover {
+        background: #f1f5f9;
+        color: #0b1f3a;
+    }
+
+    /* TRANSACTION PANEL */
+
+    .transaction-panel {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+    }
+
+    .transaction-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 21px 24px;
+        border-bottom: 1px solid #e8edf5;
+    }
+
+    .transaction-header h2 {
+        margin: 0;
+        color: #0b1f3a;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .record-count {
+        padding: 7px 12px;
+        background: #eaf2ff;
+        color: #1769e0;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    /* TABLE */
+
+    .payment-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+    .payment-table thead th {
+        padding: 16px 18px;
+        background: #f8faff;
+        color: #64748b;
+        border-bottom: 1px solid #e8edf5;
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .payment-table tbody td {
+        padding: 18px;
+        color: #334155;
+        border-bottom: 1px solid #edf1f6;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .payment-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .payment-table tbody tr:hover {
+        background: #f8faff;
+    }
+
+    .customer-name {
+        display: block;
+        color: #0b1f3a;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .customer-email {
+        display: block;
+        margin-top: 5px;
+        color: #94a3b8;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+    }
+
+    .order-number {
+        color: #1769e0;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .payment-id {
+        display: block;
+        max-width: 180px;
+        color: #475569;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+    }
+
+    .amount {
+        color: #0b1f3a;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    /* STATUS BADGES */
+
+    .status-badge {
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-captured {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-failed {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .status-pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    /* VERIFICATION */
+
+    .verification-badge {
+        display: inline-block;
+        min-width: 75px;
+        padding: 7px 10px;
+        border-radius: 20px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .verification-yes {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .verification-no {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    .payment-date {
+        color: #64748b;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .empty-state {
+        padding: 45px 20px !important;
+        color: #94a3b8 !important;
+        text-align: center;
+        font-size: 15px !important;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 768px) {
+        .page-title h1 {
+            font-size: 28px;
+        }
+
+        .filter-panel {
+            padding: 17px;
+        }
+
+        .transaction-header {
+            padding: 17px;
+        }
+
+        .transaction-header h2 {
+            font-size: 18px;
+        }
+
+        .payment-table thead th,
+        .payment-table tbody td {
+            padding: 13px;
+            font-size: 12px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+        }
+    }
+</style>
+
+<div class="payments-page">
+
+    <!-- PAGE HEADER -->
+
+    <div class="page-title">
+        <div>
+            <h1>Payments</h1>
+            <p>Monitor Razorpay transactions and payment verification.</p>
+        </div>
+    </div>
+
+
+    <!-- PAYMENT SUMMARY -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-xl-3 col-md-6">
+            <div class="payment-stat">
+                <span class="stat-label">Total Payments</span>
+                <strong class="stat-value">{{ total_payments }}</strong>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="payment-stat captured">
+                <span class="stat-label">Captured Payments</span>
+                <strong class="stat-value">{{ captured_count }}</strong>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="payment-stat failed">
+                <span class="stat-label">Failed Payments</span>
+                <strong class="stat-value">{{ failed_count }}</strong>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="payment-stat pending">
+                <span class="stat-label">Created / Authorized</span>
+                <strong class="stat-value">{{ pending_count }}</strong>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH AND FILTER -->
+
+    <section class="filter-panel">
+
+        <h2 class="filter-title">Search and Filter Payments</h2>
+
+        <form method="get" class="d-flex flex-wrap gap-2">
+
+            <input
+                type="search"
+                name="q"
+                class="form-control"
+                style="max-width:400px; flex:1 1 240px;"
+                placeholder="Search payment ID, order or customer"
+                value="{{ query }}"
+            >
+
+            <select name="status"
+                    class="form-select"
+                    style="max-width:240px;">
+
+                <option value="">All payment statuses</option>
+
+                {% for value, label in status_choices %}
+                <option value="{{ value }}"
+                    {% if selected_status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+
+            </select>
+
+            <button type="submit" class="btn search-btn">
+                Search Payments
+            </button>
+
+            <a href="{% url 'management_payments' %}"
+               class="clear-btn">
+                Clear Filters
+            </a>
+
+        </form>
+
+    </section>
+
+
+    <!-- TRANSACTION HISTORY -->
+
+    <section class="transaction-panel">
+
+        <div class="transaction-header">
+            <h2>Transaction History</h2>
+            <span class="record-count">
+                {{ total_payments }} records
+            </span>
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="payment-table">
+
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Order Number</th>
+                        <th>Payment ID</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Signature</th>
+                        <th>Webhook</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for payment in payments %}
+
+                    <tr>
+
+                        <td>
+                            <span class="customer-name">
+                                {{ payment.order.user.username }}
+                            </span>
+
+                            <span class="customer-email">
+                                {{ payment.order.user.email }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="order-number">
+                                {{ payment.order.order_number }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="payment-id">
+                                {{ payment.provider_payment_id|default:"—" }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="amount">
+                                {{ payment.currency }}
+                                {{ payment.amount_rupees|floatformat:2 }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            {% if payment.status == "captured" %}
+
+                                <span class="status-badge status-captured">
+                                    {{ payment.get_status_display }}
+                                </span>
+
+                            {% elif payment.status == "failed" %}
+
+                                <span class="status-badge status-failed">
+                                    {{ payment.get_status_display }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-badge status-pending">
+                                    {{ payment.get_status_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if payment.signature_verified %}
+                                <span class="verification-badge verification-yes">
+                                    Verified
+                                </span>
+                            {% else %}
+                                <span class="verification-badge verification-no">
+                                    No
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if payment.webhook_verified %}
+                                <span class="verification-badge verification-yes">
+                                    Verified
+                                </span>
+                            {% else %}
+                                <span class="verification-badge verification-no">
+                                    No
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            <span class="payment-date">
+                                {{ payment.created_at|date:"d M Y, H:i" }}
+                            </span>
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            No payment records found.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,337 @@
+
+{% extends "accounts/base.html" %}
+
+{% block title %}My Dashboard — AKLYTE{% endblock %}
+
+{% block account_heading %}My AKLYTE Account{% endblock %}
+
+{% block account_content %}
+
+<style>
+.dashboard-welcome {
+    margin-bottom: 25px;
+}
+
+.dashboard-welcome h2 {
+    font-size: 21px;
+    font-weight: 800;
+    color: #102b50;
+    margin-bottom: 8px;
+}
+
+.dashboard-welcome p {
+    color: #71829a;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.dashboard-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 25px 0;
+}
+
+.dashboard-link {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px;
+    background: #f7faff;
+    border: 1px solid #e3ebf7;
+    border-radius: 11px;
+    text-decoration: none !important;
+    transition: .2s ease;
+}
+
+.dashboard-link:hover {
+    border-color: #1769e0;
+    background: #eef5ff;
+    transform: translateY(-2px);
+}
+
+.dashboard-link .link-title {
+    color: #15345e;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.dashboard-link .link-description {
+    color: #8190a6;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.dashboard-section-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #102b50;
+    margin-bottom: 15px;
+}
+
+.github-panel {
+    border: 1px solid #e0e9f5;
+    background: #fbfdff;
+    padding: 22px;
+    border-radius: 12px;
+    margin-top: 25px;
+}
+
+.github-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.github-panel-header h3 {
+    font-size: 17px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.github-status {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.github-connected {
+    background: #e5f8ee;
+    color: #087443;
+}
+
+.github-disconnected {
+    background: #fff3d4;
+    color: #936000;
+}
+
+.github-panel p {
+    color: #71829a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.account-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.account-action-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid #dce5f1;
+    background: white;
+    color: #1769e0;
+}
+
+.account-action-btn:hover {
+    background: #edf4ff;
+    color: #1054ba;
+}
+
+.dashboard-note {
+    background: #f1f6ff;
+    border: 1px solid #dceaff;
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 22px;
+}
+
+.dashboard-note strong {
+    display: block;
+    font-size: 13px;
+    color: #174a89;
+    margin-bottom: 5px;
+}
+
+.dashboard-note p {
+    color: #71829a;
+    font-size: 12px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.dashboard-logout {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e9eef5;
+}
+
+@media(max-width: 700px) {
+    .dashboard-links {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width: 430px) {
+    .dashboard-links {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<!-- WELCOME -->
+<div class="dashboard-welcome">
+    <h2>Welcome back, {{ request.user.username }}</h2>
+
+    <p>
+        Manage your AKLYTE account, purchases and source code access.
+    </p>
+
+    <p>
+        <strong>Email:</strong> {{ request.user.email }}
+    </p>
+</div>
+
+<!-- ACCOUNT NAVIGATION -->
+<h3 class="dashboard-section-title">Account Overview</h3>
+
+<div class="dashboard-links">
+
+    <a href="{% url 'customer_profile' %}" class="dashboard-link">
+        <span class="link-title">Edit Profile</span>
+        <span class="link-description">
+            Update your personal account information.
+        </span>
+    </a>
+
+    <a href="{% url 'password_change' %}" class="dashboard-link">
+        <span class="link-title">Change Password</span>
+        <span class="link-description">
+            Update your account password securely.
+        </span>
+    </a>
+
+    <a href="{% url 'order_list' %}" class="dashboard-link">
+        <span class="link-title">My Orders</span>
+        <span class="link-description">
+            View your purchases and payment details.
+        </span>
+    </a>
+
+    <a href="{% url 'github_access_list' %}" class="dashboard-link">
+        <span class="link-title">My GitHub Access</span>
+        <span class="link-description">
+            Access your purchased source code repositories.
+        </span>
+    </a>
+
+    <a href="{% url 'cart_detail' %}" class="dashboard-link">
+        <span class="link-title">My Cart</span>
+        <span class="link-description">
+            Review projects added to your shopping cart.
+        </span>
+    </a>
+
+    <a href="{% url 'support_ticket_list' %}" class="dashboard-link">
+        <span class="link-title">Help & Support</span>
+        <span class="link-description">
+            Get assistance with orders and purchases.
+        </span>
+    </a>
+
+</div>
+
+<!-- GITHUB ACCOUNT -->
+<div class="github-panel">
+
+    <div class="github-panel-header">
+        <h3>GitHub Account</h3>
+
+        {% if profile.github_user_id %}
+            <span class="github-status github-connected">
+                Connected
+            </span>
+        {% else %}
+            <span class="github-status github-disconnected">
+                Not Connected
+            </span>
+        {% endif %}
+    </div>
+
+    {% if profile.github_user_id %}
+
+        <p>
+            Your GitHub account is connected successfully.
+        </p>
+
+        <p>
+            <strong>GitHub Username:</strong>
+            {{ profile.github_username }}
+        </p>
+
+        <p>
+            <strong>Verified GitHub ID:</strong>
+            {{ profile.github_user_id }}
+        </p>
+
+        <div class="account-actions">
+
+            <a href="{% url 'github_access_list' %}"
+               class="account-action-btn">
+                View GitHub Access
+            </a>
+
+            <form method="post" action="{% url 'github_disconnect' %}">
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="btn btn-outline-danger btn-sm"
+                        style="padding:9px 14px">
+                    Disconnect GitHub
+                </button>
+            </form>
+
+        </div>
+
+    {% else %}
+
+        <p>
+            Connect your GitHub account to receive access to
+            your purchased private repositories.
+        </p>
+
+        <a href="{% url 'github_connect' %}"
+           class="btn btn-primary btn-sm">
+            Connect GitHub
+        </a>
+
+    {% endif %}
+
+</div>
+
+<!-- INFORMATION -->
+<div class="dashboard-note">
+    <strong>Your AKLYTE Purchases</strong>
+
+    <p>
+        After a successful payment, visit My Orders to view
+        your order details. Follow the source code access
+        instructions there to find your GitHub repository.
+    </p>
+</div>
+
+<!-- SIGN OUT -->
+<div class="dashboard-logout">
+
+    <form method="post" action="{% url 'customer_logout' %}">
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-outline-secondary btn-sm">
+            Sign Out
+        </button>
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,177 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Account — AKLYTE{% endblock %}
+
+{% block content %}
+
+<style>
+.account-section {
+    background: #f5f8fd;
+    min-height: 65vh;
+    padding: 55px 15px 70px;
+}
+
+.account-wrapper {
+    max-width: 1000px;
+    margin: auto;
+}
+
+.account-header {
+    background: linear-gradient(120deg, #07172f, #19477e);
+    padding: 30px;
+    border-radius: 15px;
+    color: white;
+    margin-bottom: 28px;
+}
+
+.account-header h1 {
+    font-size: 27px;
+    font-weight: 800;
+    margin: 0 0 8px;
+}
+
+.account-header p {
+    color: #c4d8f5;
+    margin: 0;
+    font-size: 14px;
+}
+
+.account-breadcrumb {
+    color: #a9c9ff;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+.account-breadcrumb a {
+    color: #a9c9ff;
+    text-decoration: none;
+}
+
+.account-content-card {
+    background: #fff;
+    border: 1px solid #e2eaf5;
+    border-radius: 13px;
+    padding: 28px;
+    box-shadow: 0 5px 22px rgba(15, 39, 75, .04);
+}
+
+.account-alert {
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.account-alert.info {
+    background: #eaf3ff;
+    color: #1755a0;
+    border: 1px solid #d2e5ff;
+}
+
+.account-alert.success {
+    background: #e9f8ef;
+    color: #087443;
+    border: 1px solid #c9ecd7;
+}
+
+.account-alert.error {
+    background: #fff0ef;
+    color: #b42318;
+    border: 1px solid #ffd7d4;
+}
+
+.account-alert.warning {
+    background: #fff7e5;
+    color: #875900;
+    border: 1px solid #f5e2b5;
+}
+
+.account-content-card h2,
+.account-content-card h3 {
+    color: #102b50;
+    font-weight: 800;
+}
+
+.account-content-card a:not(.btn) {
+    color: #1769e0;
+}
+
+.account-content-card input,
+.account-content-card select,
+.account-content-card textarea {
+    border-radius: 8px;
+    border: 1px solid #dce5f1;
+    padding: 10px 12px;
+}
+
+.account-content-card input:focus,
+.account-content-card select:focus,
+.account-content-card textarea:focus {
+    border-color: #1769e0;
+    box-shadow: 0 0 0 3px rgba(23, 105, 224, .1);
+    outline: none;
+}
+
+@media(max-width: 600px) {
+    .account-section {
+        padding: 30px 12px 45px;
+    }
+
+    .account-header {
+        padding: 23px;
+    }
+
+    .account-header h1 {
+        font-size: 22px;
+    }
+
+    .account-content-card {
+        padding: 19px;
+    }
+}
+</style>
+
+<section class="account-section">
+    <div class="account-wrapper">
+
+        <div class="account-header">
+            <div class="account-breadcrumb">
+                <a href="/">Home</a> / My Account
+            </div>
+
+            <h1>
+                {% block account_heading %}
+                    My AKLYTE Account
+                {% endblock %}
+            </h1>
+
+            <p>
+                Manage your profile, purchases, GitHub access
+                and customer support.
+            </p>
+        </div>
+
+        <div class="account-content-card">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="account-alert
+                        {% if message.tags == 'success' %}success
+                        {% elif message.tags == 'error' %}error
+                        {% elif message.tags == 'warning' %}warning
+                        {% else %}info{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block account_content %}
+            {% endblock %}
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

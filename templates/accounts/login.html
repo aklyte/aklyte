@@ -1,0 +1,213 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Customer Sign In — AKLYTE{% endblock %}
+
+{% block account_heading %}
+Customer Sign In
+{% endblock %}
+
+{% block account_content %}
+
+<style>
+    .login-wrapper {
+        max-width: 450px;
+        margin: 20px auto;
+        padding: 25px;
+        background: #ffffff;
+        border: 1px solid #dce6f5;
+        border-radius: 14px;
+    }
+
+    .login-wrapper h2 {
+        color: #0b1f3a;
+        font-size: 25px;
+        font-weight: 800;
+        margin-bottom: 5px;
+    }
+
+    .login-subtitle {
+        color: #718096;
+        font-size: 14px;
+        margin-bottom: 22px;
+    }
+
+    .login-wrapper label {
+        color: #0b1f3a;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .login-wrapper input {
+        width: 100%;
+        min-height: 43px;
+        padding: 10px 12px;
+        border: 1px solid #d7e2f0;
+        border-radius: 8px;
+        outline: none;
+        margin-bottom: 15px;
+    }
+
+    .login-wrapper input:focus {
+        border-color: #1769e0;
+        box-shadow: 0 0 0 3px rgba(23, 105, 224, 0.12);
+    }
+
+    .login-submit-btn {
+        width: 100%;
+        min-height: 45px;
+        border: none;
+        border-radius: 8px;
+        background: #1769e0;
+        color: #ffffff;
+        font-weight: 700;
+        margin-top: 5px;
+        transition: 0.2s ease;
+    }
+
+    .login-submit-btn:hover {
+        background: #1055bd;
+    }
+
+    /* Google button */
+    .google-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 45px;
+    padding: 10px;
+    background-color: #dc2626;
+    color: #ffffff !important;
+    border: 1px solid #dc2626;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none !important;
+    transition: background-color 0.2s ease;
+}
+
+.google-login-btn:hover,
+.google-login-btn:focus,
+.google-login-btn:active {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+    .login-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #94a3b8;
+        font-size: 12px;
+        margin: 22px 0;
+    }
+
+    .login-divider::before,
+    .login-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #e2e8f0;
+    }
+
+    .login-links {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 20px;
+        font-size: 13px;
+    }
+
+    .login-links a,
+    .register-link a {
+        color: #075de5;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .login-links a:hover,
+    .register-link a:hover {
+        text-decoration: underline;
+    }
+
+    .register-link {
+        text-align: center;
+        margin-top: 22px;
+        color: #718096;
+        font-size: 13px;
+    }
+
+    .login-error {
+        color: #dc2626;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    @media (max-width: 576px) {
+        .login-wrapper {
+            padding: 20px;
+            margin: 10px auto;
+        }
+    }
+</style>
+
+<div class="login-wrapper">
+
+    <h2>Welcome Back</h2>
+
+    <p class="login-subtitle">
+        Sign in to continue to your AKLYTE account.
+    </p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="login-error mb-3">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="login-submit-btn">
+            Sign In to Your Account
+        </button>
+    </form>
+
+    <div class="login-divider">
+        OR CONTINUE WITH
+    </div>
+
+    <a href="{% url 'google_login' %}" class="google-login-btn">
+        Continue with Google
+    </a>
+
+    <div class="login-links">
+        <a href="{% url 'password_reset' %}">
+            Forgot Password?
+        </a>
+
+        <a href="{% url 'customer_register' %}">
+            Create an Account
+        </a>
+    </div>
+
+    <p class="register-link">
+        New to AKLYTE?
+        <a href="{% url 'customer_register' %}">
+            Create your free account
+        </a>
+    </p>
+
+</div>
+
+{% endblock %}

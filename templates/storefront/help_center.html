@@ -1,0 +1,86 @@
+
+{% extends "base.html" %}
+
+{% block title %}Help Center — AKLYTE{% endblock %}
+
+{% block content %}
+<style>
+    .help-hero {
+        background: linear-gradient(120deg, #08172f, #123d75);
+        color: white; text-align: center; padding: 65px 20px;
+    }
+    .help-hero h1 { font-size: clamp(32px, 5vw, 45px); font-weight: 800; }
+    .help-hero p { color: #d0def2; }
+    .help-wrap { max-width: 1000px; margin: auto; padding: 60px 20px; }
+    .help-card {
+        height: 100%; padding: 25px; border: 1px solid #e5eaf2;
+        border-radius: 14px; background: white;
+    }
+    .help-card h3 { color: #123d75; font-size: 19px; font-weight: 750; }
+    .help-card p { color: #64748b; line-height: 1.7; }
+</style>
+
+<section class="help-hero">
+    <h1>AKLYTE Help Center</h1>
+    <p class="mb-0">Find help with your account, purchases and project delivery.</p>
+</section>
+
+<section class="help-wrap">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="help-card">
+                <h3>Account Assistance</h3>
+                <p>Need help with registration, login or your customer account?</p>
+                <a href="{% url 'customer_dashboard' %}" class="btn btn-outline-primary">My Account</a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="help-card">
+                <h3>Orders and Payments</h3>
+                <p>Check your order history and review the current status of your purchases.</p>
+                <a href="{% url 'order_list' %}" class="btn btn-outline-primary">My Orders</a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="help-card">
+                <h3>GitHub Repository Access</h3>
+                <p>Repository invitations are sent to the GitHub account connected to your AKLYTE account. Check your GitHub notifications and invitation email.</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'github_access_list' %}" class="btn btn-outline-primary">Check GitHub Access</a>
+                {% else %}
+                    <a href="{% url 'customer_login' %}" class="btn btn-outline-primary">Login to Continue</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="help-card">
+                <h3>Installation and Documentation</h3>
+                <p>Check the purchased product page and available documentation for setup instructions.</p>
+                <a href="{% url 'product_list' %}" class="btn btn-outline-primary">Browse Projects</a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="help-card">
+                <h3>Frequently Asked Questions</h3>
+                <p>Read answers to common questions about buying projects and receiving source code.</p>
+                <a href="{% url 'faqs' %}" class="btn btn-outline-primary">View FAQs</a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="help-card">
+                <h3>Contact Support</h3>
+                <p>If you need further assistance, contact the AKLYTE team or create a support ticket.</p>
+                <a href="{% url 'contact' %}" class="btn btn-primary">Contact Us</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'support_ticket_create' %}" class="btn btn-outline-primary mt-2">Create Ticket</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

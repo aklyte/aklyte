@@ -1,0 +1,440 @@
+{% extends "management/base.html" %}
+
+{% block title %}GitHub Delivery — AKLYTE{% endblock %}
+
+{% block content %}
+
+<style>
+    .github-delivery-page {
+        width: 100%;
+    }
+
+    /* PAGE HEADER */
+
+    .page-title {
+        margin-bottom: 30px;
+    }
+
+    .page-title h1 {
+        color: #0b1f3a;
+        font-size: 32px;
+        font-weight: 850;
+        margin-bottom: 7px;
+    }
+
+    .page-title p {
+        color: #718096;
+        font-size: 16px;
+        margin: 0;
+    }
+
+    /* SUMMARY PANEL */
+
+    .delivery-info {
+        margin-bottom: 25px;
+        padding: 20px 23px;
+        background: #eaf2ff;
+        border: 1px solid #d5e5ff;
+        border-radius: 11px;
+    }
+
+    .delivery-info strong {
+        display: block;
+        color: #0b1f3a;
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .delivery-info p {
+        color: #475569;
+        font-size: 14px;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    /* MAIN PANEL */
+
+    .delivery-panel {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-radius: 13px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+    }
+
+    .delivery-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 21px 24px;
+        border-bottom: 1px solid #e8edf5;
+    }
+
+    .delivery-panel-header h2 {
+        color: #0b1f3a;
+        font-size: 20px;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .delivery-label {
+        padding: 7px 12px;
+        background: #eaf2ff;
+        color: #1769e0;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    /* TABLE */
+
+    .delivery-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+    .delivery-table thead th {
+        padding: 17px 20px;
+        background: #f8faff;
+        color: #64748b;
+        border-bottom: 1px solid #e8edf5;
+        font-size: 14px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .delivery-table tbody td {
+        padding: 19px 20px;
+        color: #334155;
+        border-bottom: 1px solid #edf1f6;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .delivery-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .delivery-table tbody tr:hover {
+        background: #f8faff;
+    }
+
+    /* CUSTOMER */
+
+    .customer-name {
+        display: block;
+        color: #0b1f3a;
+        font-size: 15px;
+        font-weight: 800;
+        margin-bottom: 5px;
+    }
+
+    .customer-github {
+        display: block;
+        color: #718096;
+        font-size: 13px;
+        overflow-wrap: anywhere;
+    }
+
+    /* PRODUCT */
+
+    .product-name {
+        color: #0b1f3a;
+        font-size: 14px;
+        font-weight: 750;
+    }
+
+    /* REPOSITORY */
+
+    .repository-name {
+        display: inline-block;
+        padding: 7px 10px;
+        background: #f1f5f9;
+        color: #334155;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    /* ORDER */
+
+    .order-number {
+        display: block;
+        color: #1769e0;
+        font-size: 14px;
+        font-weight: 750;
+    }
+
+    .order-status {
+        display: block;
+        margin-top: 5px;
+        color: #718096;
+        font-size: 12px;
+    }
+
+    /* DELIVERY STATUS */
+
+    .status-badge {
+        display: inline-block;
+        padding: 7px 11px;
+        background: #eaf2ff;
+        color: #1769e0;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .delivery-error {
+        max-width: 250px;
+        margin-top: 9px;
+        padding: 9px 11px;
+        background: #fff1f2;
+        color: #be123c;
+        border-radius: 7px;
+        font-size: 12px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    /* RETRY BUTTON */
+
+    .retry-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 9px 13px;
+        background: #eaf2ff;
+        color: #1769e0;
+        border: 1px solid #d5e5ff;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 750;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .retry-btn:hover {
+        background: #1769e0;
+        border-color: #1769e0;
+        color: #ffffff;
+    }
+
+    .not-eligible {
+        color: #94a3b8;
+        font-size: 14px;
+    }
+
+    /* EMPTY STATE */
+
+    .empty-state {
+        padding: 50px 20px !important;
+        text-align: center;
+        color: #94a3b8 !important;
+        font-size: 15px !important;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 768px) {
+        .page-title h1 {
+            font-size: 28px;
+        }
+
+        .delivery-panel-header {
+            padding: 17px;
+        }
+
+        .delivery-table thead th,
+        .delivery-table tbody td {
+            padding: 13px;
+            font-size: 13px;
+        }
+    }
+</style>
+
+<div class="github-delivery-page">
+
+    <!-- PAGE HEADER -->
+
+    <div class="page-title">
+
+        <h1>GitHub Delivery</h1>
+
+        <p>
+            Manage customer repository invitations and source-code delivery.
+        </p>
+
+    </div>
+
+
+    <!-- INFORMATION -->
+
+    <div class="delivery-info">
+
+        <strong>GitHub Repository Delivery</strong>
+
+        <p>
+            Monitor repository access for purchased products.
+            You can retry an invitation when the related order has been paid.
+        </p>
+
+    </div>
+
+
+    <!-- DELIVERY TABLE -->
+
+    <section class="delivery-panel">
+
+        <div class="delivery-panel-header">
+
+            <h2>Repository Access Records</h2>
+
+            <span class="delivery-label">
+                {{ accesses|length }} Records
+            </span>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="delivery-table">
+
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Product</th>
+                        <th>Repository</th>
+                        <th>Order</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for access in accesses %}
+
+                    <tr>
+
+                        <!-- CUSTOMER -->
+
+                        <td>
+
+                            <span class="customer-name">
+                                {{ access.customer.username }}
+                            </span>
+
+                            <span class="customer-github">
+                                {{ access.github_username|default:"GitHub not connected" }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- PRODUCT -->
+
+                        <td>
+                            <span class="product-name">
+                                {{ access.order_item.product_name }}
+                            </span>
+                        </td>
+
+
+                        <!-- REPOSITORY -->
+
+                        <td>
+                            <span class="repository-name">
+                                {{ access.repo_owner }}/{{ access.repo_name }}
+                            </span>
+                        </td>
+
+
+                        <!-- ORDER -->
+
+                        <td>
+
+                            <span class="order-number">
+                                {{ access.order_item.order.order_number }}
+                            </span>
+
+                            <span class="order-status">
+                                {{ access.order_item.order.get_status_display }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- STATUS -->
+
+                        <td>
+
+                            <span class="status-badge">
+                                {{ access.get_status_display }}
+                            </span>
+
+                            {% if access.last_error %}
+
+                                <div class="delivery-error">
+                                    {{ access.last_error }}
+                                </div>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- ACTION -->
+
+                        <td>
+
+                            {% if access.order_item.order.status == 'paid' %}
+
+                                <form method="post"
+                                      action="{% url 'management_github_retry' access.pk %}">
+
+                                    {% csrf_token %}
+
+                                    <button type="submit" class="retry-btn">
+                                        Retry Invitation
+                                    </button>
+
+                                </form>
+
+                            {% else %}
+
+                                <span class="not-eligible">—</span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            No GitHub delivery records yet.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

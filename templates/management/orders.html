@@ -1,0 +1,535 @@
+{% extends "management/base.html" %}
+
+{% block title %}Orders — AKLYTE{% endblock %}
+
+{% block content %}
+
+<style>
+    .orders-page {
+        width: 100%;
+    }
+
+    /* PAGE HEADER */
+
+    .page-title {
+        margin-bottom: 30px;
+    }
+
+    .page-title h1 {
+        color: #0b1f3a;
+        font-size: 32px;
+        font-weight: 850;
+        margin-bottom: 7px;
+    }
+
+    .page-title p {
+        color: #718096;
+        font-size: 16px;
+        margin: 0;
+    }
+
+    /* STATISTICS */
+
+    .order-stat-card {
+        min-height: 125px;
+        padding: 24px;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-right: 5px solid #1769e0;
+        border-radius: 13px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+        transition: 0.2s ease;
+    }
+
+    .order-stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 9px 22px rgba(15, 35, 65, 0.08);
+    }
+
+    .order-stat-card span {
+        display: block;
+        margin-bottom: 13px;
+        color: #718096;
+        font-size: 15px;
+        font-weight: 650;
+    }
+
+    .order-stat-card strong {
+        display: block;
+        color: #0b1f3a;
+        font-size: 29px;
+        font-weight: 850;
+    }
+
+    /* SEARCH PANEL */
+
+    .filter-panel {
+        margin: 25px 0;
+        padding: 23px;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-radius: 13px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+    }
+
+    .filter-heading {
+        margin-bottom: 16px;
+        color: #0b1f3a;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .order-filter-form {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .order-filter-form input,
+    .order-filter-form select {
+        min-height: 47px;
+        padding: 10px 14px;
+        background: #ffffff;
+        border: 1px solid #d7e2f0;
+        border-radius: 8px;
+        color: #26364b;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .order-filter-form input {
+        flex: 1;
+        min-width: 230px;
+        max-width: 400px;
+    }
+
+    .order-filter-form select {
+        min-width: 190px;
+    }
+
+    .order-filter-form input:focus,
+    .order-filter-form select:focus {
+        border-color: #1769e0;
+        box-shadow: 0 0 0 3px rgba(23, 105, 224, 0.12);
+    }
+
+    .filter-btn,
+    .clear-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 750;
+        text-decoration: none;
+        transition: 0.2s ease;
+    }
+
+    .filter-btn {
+        background: #1769e0;
+        color: #ffffff;
+        border: 1px solid #1769e0;
+    }
+
+    .filter-btn:hover {
+        background: #1055bd;
+        color: #ffffff;
+    }
+
+    .clear-btn {
+        background: #ffffff;
+        color: #475569;
+        border: 1px solid #dce5f0;
+    }
+
+    .clear-btn:hover {
+        background: #f1f5f9;
+        color: #0b1f3a;
+    }
+
+    /* TABLE PANEL */
+
+    .orders-panel {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-radius: 13px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+    }
+
+    .orders-panel-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 21px 24px;
+        border-bottom: 1px solid #e8edf5;
+    }
+
+    .orders-panel-heading h2 {
+        margin: 0;
+        color: #0b1f3a;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .order-count {
+        padding: 7px 12px;
+        background: #eaf2ff;
+        color: #1769e0;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    /* TABLE */
+
+    .orders-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+    .orders-table thead th {
+        padding: 17px 18px;
+        background: #f8faff;
+        color: #64748b;
+        border-bottom: 1px solid #e8edf5;
+        font-size: 14px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .orders-table tbody td {
+        padding: 18px;
+        color: #334155;
+        border-bottom: 1px solid #edf1f6;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .orders-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .orders-table tbody tr:hover {
+        background: #f8faff;
+    }
+
+    /* ORDER NUMBER */
+
+    .order-number {
+        display: block;
+        color: #1769e0;
+        font-size: 14px;
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    /* CUSTOMER */
+
+    .order-customer {
+        display: block;
+        color: #0b1f3a;
+        font-size: 14px;
+        font-weight: 750;
+    }
+
+    .order-email {
+        display: block;
+        margin-top: 5px;
+        color: #8492a6;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+    }
+
+    /* PRODUCTS */
+
+    .product-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 32px;
+        padding: 6px 10px;
+        background: #f1f5f9;
+        color: #334155;
+        border-radius: 7px;
+        font-weight: 750;
+    }
+
+    /* TOTAL */
+
+    .order-total {
+        color: #0b1f3a;
+        font-size: 15px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    /* STATUS */
+
+    .order-status {
+        display: inline-block;
+        padding: 7px 11px;
+        background: #eaf2ff;
+        color: #1769e0;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    /* VIEW BUTTON */
+
+    .view-order-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 13px;
+        background: #eaf2ff;
+        color: #1769e0;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 750;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: 0.2s ease;
+    }
+
+    .view-order-btn:hover {
+        background: #1769e0;
+        color: #ffffff;
+    }
+
+    /* EMPTY STATE */
+
+    .empty-state {
+        padding: 45px 20px !important;
+        color: #94a3b8 !important;
+        text-align: center;
+        font-size: 15px !important;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 768px) {
+        .page-title h1 {
+            font-size: 28px;
+        }
+
+        .order-filter-form {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .order-filter-form input,
+        .order-filter-form select {
+            width: 100%;
+            max-width: none;
+        }
+
+        .filter-btn,
+        .clear-btn {
+            width: 100%;
+        }
+
+        .orders-panel-heading {
+            padding: 17px;
+        }
+
+        .orders-table thead th,
+        .orders-table tbody td {
+            padding: 12px;
+            font-size: 13px;
+        }
+    }
+</style>
+
+<div class="orders-page">
+
+    <!-- PAGE HEADER -->
+
+    <div class="page-title">
+
+        <h1>Orders</h1>
+
+        <p>View, search and monitor all customer purchases.</p>
+
+    </div>
+
+
+    <!-- ORDER STATISTICS -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4 col-sm-6">
+
+            <div class="order-stat-card">
+
+                <span>Matching Orders</span>
+
+                <strong>{{ total_orders }}</strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH AND FILTER -->
+
+    <section class="filter-panel">
+
+        <h2 class="filter-heading">Search &amp; Filter Orders</h2>
+
+        <form method="get" class="order-filter-form">
+
+            <input
+                type="text"
+                name="q"
+                placeholder="Search order number or customer"
+                value="{{ query }}"
+            >
+
+            <select name="status">
+
+                <option value="">All Statuses</option>
+
+                {% for value, label in status_choices %}
+
+                    <option value="{{ value }}"
+                        {% if selected_status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <button type="submit" class="filter-btn">
+                Search
+            </button>
+
+            <a href="{% url 'management_orders' %}"
+               class="clear-btn">
+                Clear Filters
+            </a>
+
+        </form>
+
+    </section>
+
+
+    <!-- ORDERS TABLE -->
+
+    <section class="orders-panel">
+
+        <div class="orders-panel-heading">
+
+            <h2>All Orders</h2>
+
+            <span class="order-count">
+                {{ total_orders }} Records
+            </span>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="orders-table">
+
+                <thead>
+                    <tr>
+                        <th>Order Number</th>
+                        <th>Customer</th>
+                        <th>Products</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for order in orders %}
+
+                    <tr>
+
+                        <td>
+                            <span class="order-number">
+                                {{ order.order_number }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <span class="order-customer">
+                                {{ order.user.username }}
+                            </span>
+
+                            <span class="order-email">
+                                {{ order.user.email }}
+                            </span>
+
+                        </td>
+
+                        <td>
+                            <span class="product-count">
+                                {{ order.items.count }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="order-total">
+                                {{ order.currency }} {{ order.total }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="order-status">
+                                {{ order.get_status_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ order.created_at|date:"d M Y" }}
+                        </td>
+
+                        <td>
+
+                            <a class="view-order-btn"
+                               href="{% url 'management_order_detail' order.order_number %}">
+                                View Details
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            No orders found. Try changing your search or status filter.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

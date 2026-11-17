@@ -1,0 +1,98 @@
+
+{% extends "base.html" %}
+
+{% block title %}Contact Us — AKLYTE{% endblock %}
+
+{% block content %}
+<style>
+    .contact-hero {
+        background: linear-gradient(120deg, #08172f, #123d75);
+        color: white; text-align: center; padding: 65px 20px;
+    }
+    .contact-hero h1 { font-size: clamp(32px, 5vw, 45px); font-weight: 800; }
+    .contact-hero p { color: #d0def2; }
+    .contact-wrap { max-width: 1050px; margin: auto; padding: 60px 20px; }
+    .contact-card {
+        height: 100%; padding: 28px; border-radius: 15px;
+        background: white; border: 1px solid #e5eaf2;
+        box-shadow: 0 8px 25px #102a4d0a;
+    }
+    .contact-card h3 { color: #123d75; font-size: 19px; font-weight: 750; }
+    .contact-card p { color: #64748b; line-height: 1.7; }
+    .contact-link { color: #2563eb; font-weight: 650; text-decoration: none; overflow-wrap: anywhere; }
+    .contact-link:hover { text-decoration: underline; }
+</style>
+
+<section class="contact-hero">
+    <h1>Contact AKLYTE</h1>
+    <p class="mb-0">Have a question about a project, purchase or source code access?</p>
+</section>
+
+<section class="contact-wrap">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">We're Here to Help</h2>
+        <p class="text-secondary">Choose the appropriate channel to get in touch with us.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="contact-card">
+                <h3>Business Enquiries</h3>
+                <p>For general questions, business enquiries and collaboration requests.</p>
+                <a class="contact-link" href="mailto:aklyte200@gmail.com">
+                    aklyte200@gmail.com
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="contact-card">
+                <h3>Customer Support</h3>
+                <p>For order issues, payment questions, GitHub invitations or product assistance.</p>
+                {% if user.is_authenticated %}
+                    <a class="btn btn-primary" href="{% url 'support_ticket_list' %}">Open Support Tickets</a>
+                    <a class="contact-link d-block mt-3" href="{% url 'support_ticket_create' %}">Create a support request</a>
+                {% else %}
+                    <a class="btn btn-primary" href="{% url 'customer_login' %}">Login for Support</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="contact-card">
+                <h3>LinkedIn</h3>
+                <p>Connect through the LinkedIn profile.</p>
+                <a class="contact-link" href="https://www.linkedin.com/in/k-ansar/"
+                   target="_blank" rel="noopener noreferrer">Visit LinkedIn Profile</a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="contact-card">
+                <h3>Instagram</h3>
+                <p>Follow AKLYTE on Instagram for updates and announcements.</p>
+                <!-- Replace with the official AKLYTE Instagram profile URL -->
+                <a class="contact-link" href="https://www.instagram.com/"
+                   target="_blank" rel="noopener noreferrer">Visit Instagram</a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="contact-card">
+                <h3>GitHub</h3>
+                <p>Explore the AKLYTE GitHub organization.</p>
+                <a class="contact-link" href="https://github.com/aklyte-tech"
+                   target="_blank" rel="noopener noreferrer">Visit GitHub Organization</a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="contact-card">
+                <h3>Help Center</h3>
+                <p>Find assistance with purchases, accounts and project delivery.</p>
+                <a class="contact-link" href="{% url 'help_center' %}">Visit Help Center</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

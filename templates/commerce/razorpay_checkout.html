@@ -1,0 +1,540 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Secure Payment — AKLYTE{% endblock %}
+
+{% block content %}
+
+<style>
+/* =================================
+   AKLYTE RAZORPAY CHECKOUT
+================================= */
+
+.payment-page {
+    background: #f7f9fc;
+    min-height: 80vh;
+    padding-bottom: 70px;
+}
+
+/* HEADER */
+
+.payment-hero {
+    background: linear-gradient(120deg, #08172f, #153d76);
+    padding: 45px 0;
+    color: #ffffff;
+}
+
+.payment-hero h1 {
+    font-size: 34px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.payment-hero p {
+    color: #c4d2e8;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* CONTENT */
+
+.payment-container {
+    max-width: 760px;
+    margin: auto;
+    padding: 40px 15px 0;
+}
+
+.payment-breadcrumb {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 25px;
+}
+
+.payment-breadcrumb a {
+    color: #2878ff;
+    text-decoration: none;
+}
+
+/* PAYMENT CARD */
+
+.payment-card {
+    background: #ffffff;
+    border: 1px solid #e5ecf5;
+    border-radius: 14px;
+    padding: 30px;
+    box-shadow: 0 6px 25px rgba(20, 50, 100, .05);
+}
+
+.payment-card-title {
+    color: #142440;
+    font-size: 21px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.payment-description {
+    color: #8794a7;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* ORDER INFORMATION */
+
+.payment-order-info {
+    background: #f7f9fc;
+    border: 1px solid #e7edf5;
+    border-radius: 10px;
+    padding: 18px;
+    margin: 25px 0;
+}
+
+.payment-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 13px;
+}
+
+.payment-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.payment-info-label {
+    color: #8794a7;
+    font-size: 13px;
+}
+
+.payment-info-value {
+    color: #253650;
+    font-size: 14px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+    text-align: right;
+}
+
+.payment-amount-section {
+    border-top: 1px solid #e1e8f1;
+    padding-top: 17px;
+    margin-top: 17px;
+}
+
+.payment-amount-label {
+    color: #142440;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.payment-amount {
+    color: #102d5c;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+/* SECURITY NOTICE */
+
+.payment-security {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    background: #edf4ff;
+    border: 1px solid #d5e5ff;
+    border-radius: 9px;
+    padding: 17px;
+    margin-bottom: 25px;
+}
+
+.security-icon {
+    width: 35px;
+    height: 35px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dceaff;
+    color: #2878ff;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.security-title {
+    color: #174d91;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.security-description {
+    color: #536d8d;
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* BUTTONS */
+
+.payment-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.razorpay-pay-btn {
+    width: 100%;
+    background: #2878ff;
+    color: #ffffff;
+    border: 1px solid #2878ff;
+    border-radius: 8px;
+    padding: 15px 20px;
+    font-size: 15px;
+    font-weight: 800;
+    transition: .25s;
+}
+
+.razorpay-pay-btn:hover {
+    background: #1261e6;
+    border-color: #1261e6;
+    transform: translateY(-2px);
+}
+
+.razorpay-pay-btn:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.payment-cancel-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #ffffff;
+    color: #53647c;
+    border: 1px solid #dce4ef;
+    border-radius: 8px;
+    padding: 13px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: .2s;
+}
+
+.payment-cancel-btn:hover {
+    background: #f1f5fa;
+    color: #142440;
+}
+
+/* FOOTNOTE */
+
+.payment-footnote {
+    text-align: center;
+    color: #94a0b1;
+    font-size: 11px;
+    line-height: 1.7;
+    margin-top: 22px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 576px) {
+    .payment-hero {
+        padding: 35px 0;
+    }
+
+    .payment-hero h1 {
+        font-size: 28px;
+    }
+
+    .payment-container {
+        padding-top: 25px;
+    }
+
+    .payment-card {
+        padding: 20px;
+    }
+
+    .payment-amount {
+        font-size: 26px;
+    }
+}
+</style>
+
+
+<div class="payment-page">
+
+    <!-- HEADER -->
+    <section class="payment-hero">
+        <div class="container">
+
+            <h1>Secure Checkout</h1>
+
+            <p>
+                Complete your payment and get access to your purchased project.
+            </p>
+
+        </div>
+    </section>
+
+
+    <div class="container payment-container">
+
+        <!-- BREADCRUMB -->
+        <div class="payment-breadcrumb">
+
+            <a href="{% url 'home' %}">Home</a>
+            <span> / </span>
+
+            <a href="{% url 'order_list' %}">My Orders</a>
+            <span> / </span>
+
+            <a href="{% url 'order_detail' order.order_number %}">
+                Order Details
+            </a>
+            <span> / </span>
+
+            <span>Payment</span>
+
+        </div>
+
+
+        <!-- PAYMENT CARD -->
+        <div class="payment-card">
+
+            <h2 class="payment-card-title">
+                Complete Your Payment
+            </h2>
+
+            <p class="payment-description">
+                Review your order information and proceed to secure payment.
+            </p>
+
+
+            <!-- ORDER INFORMATION -->
+            <div class="payment-order-info">
+
+                <div class="payment-info-row">
+
+                    <span class="payment-info-label">
+                        Order Number
+                    </span>
+
+                    <span class="payment-info-value">
+                        {{ order.order_number }}
+                    </span>
+
+                </div>
+
+
+                <div class="payment-info-row">
+
+                    <span class="payment-info-label">
+                        Payment Provider
+                    </span>
+
+                    <span class="payment-info-value">
+                        Razorpay
+                    </span>
+
+                </div>
+
+
+                <div class="payment-amount-section">
+
+                    <div class="payment-info-row">
+
+                        <span class="payment-amount-label">
+                            Total Payable
+                        </span>
+
+                        <span class="payment-amount">
+                            ₹{{ order.total|floatformat:2 }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY INFORMATION -->
+            <div class="payment-security">
+
+                <div class="security-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <div class="security-title">
+                        Secure Payment
+                    </div>
+
+                    <p class="security-description">
+                        You will complete your payment through Razorpay's
+                        secure checkout. AKLYTE verifies the payment
+                        on the server before confirming your order.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- PAYMENT BUTTONS -->
+            <div class="payment-actions">
+
+                <button
+                    type="button"
+                    id="pay-button"
+                    class="razorpay-pay-btn"
+                >
+                    Pay ₹{{ order.total|floatformat:2 }} →
+                </button>
+
+
+                <a
+                    href="{% url 'order_detail' order.order_number %}"
+                    class="payment-cancel-btn"
+                >
+                    Cancel and Return to Order
+                </a>
+
+            </div>
+
+
+            <div class="payment-footnote">
+                Payments are processed securely by Razorpay.
+                Your repository access is enabled only after verified payment.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- RAZORPAY CHECKOUT SCRIPT -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+(function () {
+
+    const options = {
+        key: "{{ razorpay_key_id|escapejs }}",
+
+        amount: "{{ payment.amount_paise }}",
+
+        currency: "{{ payment.currency|escapejs }}",
+
+        name: "AKLYTE",
+
+        description: "Order {{ order.order_number|escapejs }}",
+
+        order_id: "{{ payment.provider_order_id|escapejs }}",
+
+        prefill: {
+            name: "{{ customer_name|escapejs }}",
+            email: "{{ customer_email|escapejs }}"
+        },
+
+        theme: {
+            color: "#2878ff"
+        },
+
+        handler: function (response) {
+
+            const form = document.createElement("form");
+
+            form.method = "POST";
+
+            form.action = "{% url 'razorpay_payment_callback' order.order_number %}";
+
+            const csrf = "{{ csrf_token }}";
+
+            const values = {
+                csrfmiddlewaretoken: csrf,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+            };
+
+            Object.keys(values).forEach(function (key) {
+
+                const input = document.createElement("input");
+
+                input.type = "hidden";
+                input.name = key;
+                input.value = values[key];
+
+                form.appendChild(input);
+
+            });
+
+            document.body.appendChild(form);
+
+            form.submit();
+
+        },
+
+        modal: {
+            ondismiss: function () {
+                window.location.href =
+                    "{% url 'order_detail' order.order_number %}";
+            }
+        }
+
+    };
+
+
+    const payButton = document.getElementById("pay-button");
+
+    payButton.addEventListener("click", function () {
+
+        if (!window.Razorpay) {
+
+            alert(
+                "Razorpay Checkout could not load. Check your internet connection."
+            );
+
+            return;
+
+        }
+
+        payButton.disabled = true;
+        payButton.textContent = "Opening Secure Checkout...";
+
+        try {
+
+            const checkout = new Razorpay(options);
+
+            checkout.on("payment.failed", function () {
+
+                payButton.disabled = false;
+
+                payButton.textContent =
+                    "Pay ₹{{ order.total|floatformat:2 }} →";
+
+            });
+
+            checkout.open();
+
+        } catch (error) {
+
+            payButton.disabled = false;
+
+            payButton.textContent =
+                "Pay ₹{{ order.total|floatformat:2 }} →";
+
+            alert("Unable to open Razorpay Checkout. Please try again.");
+
+        }
+
+    });
+
+})();
+</script>
+
+{% endblock %}

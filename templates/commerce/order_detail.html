@@ -1,0 +1,490 @@
+
+{% extends "base.html" %}
+
+{% block title %}Order {{ order.order_number }} — AKLYTE{% endblock %}
+
+{% block content %}
+
+<style>
+.order-page {
+    max-width: 850px;
+    margin: auto;
+    padding: 45px 15px 65px;
+    color: #10213f;
+}
+
+.order-hero {
+    background: linear-gradient(120deg, #07172f, #173e70);
+    color: white;
+    padding: 35px 0;
+}
+
+.order-hero h1 {
+    font-size: 27px;
+    font-weight: 800;
+    margin: 12px 0 8px;
+}
+
+.order-hero p {
+    color: #c5d8f5;
+    margin: 0;
+}
+
+.breadcrumb-order {
+    color: #a9c9ff;
+    font-size: 13px;
+}
+
+.breadcrumb-order a {
+    color: #a9c9ff;
+    text-decoration: none;
+}
+
+.order-back {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #1769e0;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.order-card {
+    background: #fff;
+    border: 1px solid #e1e9f4;
+    border-radius: 13px;
+    padding: 23px;
+    margin-bottom: 18px;
+    box-shadow: 0 5px 20px rgba(16, 42, 80, .035);
+}
+
+.card-heading {
+    font-size: 19px;
+    font-weight: 800;
+    margin-bottom: 18px;
+}
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.status-badge {
+    padding: 8px 15px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.status-paid {
+    color: #087443;
+    background: #e5f8ee;
+}
+
+.status-pending {
+    color: #936000;
+    background: #fff3d4;
+}
+
+.status-failed {
+    color: #b42318;
+    background: #ffebeb;
+}
+
+.muted-text {
+    color: #8292a9;
+    font-size: 13px;
+}
+
+.payment-success {
+    background: #eaf8f0;
+    color: #087443;
+    border: 1px solid #c8ecd7;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.payment-action {
+    background: #1769e0;
+    color: white;
+    border: 0;
+    padding: 13px 22px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.payment-action:hover {
+    background: #1054ba;
+    color: white;
+}
+
+.access-intro {
+    color: #71829a;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.access-step {
+    display: flex;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #edf1f7;
+}
+
+.access-step:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.step-number {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #eaf2ff;
+    color: #1769e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.step-content h3 {
+    font-size: 14px;
+    font-weight: 800;
+    margin: 2px 0 5px;
+}
+
+.step-content p {
+    color: #71829a;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.access-button {
+    display: inline-block;
+    background: #1769e0;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    padding: 11px 18px;
+    margin-top: 20px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.access-button:hover {
+    background: #1054ba;
+    color: white;
+}
+
+.project-item {
+    padding: 17px 0;
+    border-bottom: 1px solid #edf1f7;
+}
+
+.project-item:last-child {
+    border-bottom: none;
+}
+
+.project-name {
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.project-price {
+    font-weight: 800;
+    color: #102b55;
+}
+
+.doc-button {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 9px 13px;
+    background: #edf4ff;
+    color: #1769e0;
+    border: 1px solid #d6e5ff;
+    border-radius: 7px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.order-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e9eef5;
+    font-weight: 800;
+}
+
+.order-total strong {
+    font-size: 23px;
+    color: #102b55;
+}
+
+@media(max-width: 600px) {
+    .order-page {
+        padding-top: 25px;
+    }
+
+    .order-card {
+        padding: 18px;
+    }
+
+    .order-hero h1 {
+        font-size: 22px;
+    }
+}
+</style>
+
+<section class="order-hero">
+    <div class="container" style="max-width:1130px">
+        <div class="breadcrumb-order">
+            <a href="/">Home</a> /
+            <a href="{% url 'order_list' %}">My Orders</a> /
+            Order Details
+        </div>
+
+        <h1>Order {{ order.order_number }}</h1>
+
+        <p>
+            Placed on {{ order.created_at|date:"d M Y, h:i A" }}
+        </p>
+    </div>
+</section>
+
+<div class="container">
+    <div class="order-page">
+
+        <a href="{% url 'order_list' %}" class="order-back">
+            ← Back to My Orders
+        </a>
+
+        <!-- ORDER STATUS -->
+        <div class="order-card">
+            <div class="status-row">
+                <div>
+                    <strong>Order Status</strong>
+                    <p class="muted-text" style="margin:6px 0 0">
+                        Current status of your order.
+                    </p>
+                </div>
+
+                {% if order.status == "paid" %}
+                    <span class="status-badge status-paid">
+                        Paid
+                    </span>
+                {% elif order.status == "pending_payment" %}
+                    <span class="status-badge status-pending">
+                        Pending Payment
+                    </span>
+                {% elif order.status == "payment_failed" %}
+                    <span class="status-badge status-failed">
+                        Payment Failed
+                    </span>
+                {% else %}
+                    <span class="status-badge status-pending">
+                        {{ order.get_status_display }}
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- PAYMENT CONFIRMATION -->
+        {% if order.status == "paid" %}
+
+            <div class="order-card">
+                <div class="payment-success">
+                    Payment Confirmed — Your payment was successfully received.
+                </div>
+            </div>
+
+            <!-- SOURCE CODE ACCESS STEPS -->
+            <div class="order-card">
+
+                <h2 class="card-heading">
+                    How to Access Your Source Code
+                </h2>
+
+                <p class="access-intro">
+                    Thank you for purchasing from AKLYTE.
+                    Follow these steps to access and download your
+                    purchased project through GitHub.
+                </p>
+
+                <div class="access-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Go to My Account</h3>
+                        <p>
+                            Open your AKLYTE customer account
+                            using the My Account section.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="access-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Open GitHub Access</h3>
+                        <p>
+                            Navigate to the GitHub Access section
+                            in your customer account.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="access-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Connect Your GitHub Account</h3>
+                        <p>
+                            If you have not connected GitHub yet,
+                            click Connect GitHub and authorize AKLYTE.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="access-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Find Your Purchased Project</h3>
+                        <p>
+                            Your purchased project will appear
+                            in the GitHub Access section once repository
+                            access has been granted.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="access-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Open Your Repository</h3>
+                        <p>
+                            Click the repository link to open
+                            your private GitHub project.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="access-step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <h3>Copy the Git Clone Command</h3>
+                        <p>
+                            Copy the Git clone command provided
+                            in your GitHub Access page.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="access-step">
+                    <div class="step-number">7</div>
+                    <div class="step-content">
+                        <h3>Clone Your Project</h3>
+                        <p>
+                            Open your computer's terminal or
+                            command prompt, paste the command,
+                            and press Enter to download the source code.
+                        </p>
+                    </div>
+                </div>
+
+                <a href="{% url 'github_access_list' %}"
+                   class="access-button">
+                    Go to GitHub Access →
+                </a>
+
+            </div>
+
+        {% elif order.status == "pending_payment" or order.status == "payment_failed" %}
+
+            <div class="order-card">
+                <h3 class="card-heading">Complete Your Payment</h3>
+
+                <p class="muted-text">
+                    Your payment has not been confirmed yet.
+                    Complete the payment to access your purchased project.
+                </p>
+
+                <form method="POST"
+                      action="{% url 'razorpay_create_payment' order.order_number %}">
+                    {% csrf_token %}
+
+                    <button type="submit" class="payment-action">
+                        Pay Now
+                    </button>
+                </form>
+            </div>
+
+        {% endif %}
+
+        <!-- PURCHASED PROJECTS -->
+        <div class="order-card">
+
+            <h2 class="card-heading">Purchased Projects</h2>
+
+            {% for item in order.items.all %}
+
+                <div class="project-item">
+
+                    <div class="status-row">
+                        <div>
+                            <div class="project-name">
+                                {{ item.product_name }}
+                            </div>
+
+                            <p class="muted-text" style="margin:6px 0 0">
+                                Quantity: {{ item.quantity }}
+                            </p>
+                        </div>
+
+                        <div class="project-price">
+                            ₹{{ item.line_total|floatformat:2 }}
+                        </div>
+                    </div>
+
+                    {% if order.status == "paid" and item.product.document %}
+                        <a href="{% url 'customer_product_documentation' order.order_number item.pk %}"
+                           class="doc-button">
+                            Download PDF Documentation →
+                        </a>
+                    {% endif %}
+
+                </div>
+
+            {% empty %}
+
+                <p class="muted-text">
+                    No purchased projects found for this order.
+                </p>
+
+            {% endfor %}
+
+            <div class="order-total">
+                <span>Order Total</span>
+                <strong>
+                    ₹{{ order.total|floatformat:2 }}
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

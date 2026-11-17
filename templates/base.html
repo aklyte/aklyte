@@ -1,0 +1,288 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}AKLYTE — Software Projects{% endblock %}</title>
+    <meta name="description" content="Discover ready-to-use software projects, source code and developer resources at AKLYTE.">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/site.css' %}" rel="stylesheet">
+
+    <style>
+        :root {
+            --ak-navy: #08172f;
+            --ak-blue: #5c9dff;
+            --ak-light: #eef4ff;
+            --ak-text: #24344d;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--ak-text);
+            background: #f7f9fc;
+        }
+
+        main { flex: 1; }
+
+        .site-nav {
+            background: var(--ak-navy);
+            padding: 15px 0;
+        }
+
+        .site-nav .navbar-brand {
+            font-size: 25px;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .site-nav .navbar-brand span { color: var(--ak-blue); }
+
+        .site-nav .nav-link {
+            color: #c5d2e5;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 15px;
+            transition: .2s;
+        }
+
+        .site-nav .nav-link:hover,
+        .site-nav .nav-link.active { color: #69a5ff; }
+
+        .nav-contact {
+            border: 1px solid #5c9dff;
+            border-radius: 8px;
+            padding: 8px 14px !important;
+            color: #fff !important;
+        }
+
+        .nav-contact:hover {
+            background: #5c9dff;
+            color: #08172f !important;
+        }
+
+        .site-footer {
+            background: var(--ak-navy);
+            color: #aabbd2;
+            font-size: 14px;
+        }
+
+        .footer-brand {
+            color: #fff;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .footer-brand span { color: var(--ak-blue); }
+
+        .footer-heading {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .footer-link {
+            display: inline-block;
+            color: #aabbd2;
+            text-decoration: none;
+            margin-bottom: 11px;
+            transition: .2s;
+        }
+
+        .footer-link:hover {
+            color: #fff;
+            transform: translateX(3px);
+        }
+
+        .footer-social {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .footer-social a {
+            color: #c5d2e5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-social a:hover { color: #69a5ff; }
+
+        .footer-email {
+            color: #69a5ff;
+            text-decoration: none;
+        }
+
+        .footer-email:hover { color: #fff; }
+
+        .message-area {
+            max-width: 1200px;
+            margin: 18px auto 0;
+            padding: 0 15px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 1000;
+            width: 42px;
+            height: 42px;
+            border: 0;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 20px;
+            display: none;
+            box-shadow: 0 5px 18px #08172f30;
+        }
+
+        .back-to-top.show { display: block; }
+
+        @media (max-width: 991px) {
+            .site-nav .nav-link {
+                margin: 5px 0;
+                padding: 9px 0;
+            }
+
+            .nav-contact {
+                display: inline-block;
+                padding: 8px 12px !important;
+            }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark site-nav">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+            AK<span>LYTE</span>
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#mainNavigation"
+                aria-controls="mainNavigation" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavigation">
+            <div class="navbar-nav ms-auto align-items-lg-center">
+                <a class="nav-link" href="{% url 'home' %}">Home</a>
+                <a class="nav-link" href="{% url 'product_list' %}">Projects</a>
+                <a class="nav-link" href="{% url 'cart_detail' %}">Cart</a>
+                <a class="nav-link" href="{% url 'customer_dashboard' %}">My Account</a>
+                <a class="nav-link nav-contact" href="{% url 'contact' %}">Contact / Support</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+{% if messages %}
+<div class="message-area">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+    <div class="container py-5">
+        <div class="row g-4">
+
+            <div class="col-lg-4 col-md-6">
+                <div class="footer-brand">AK<span>LYTE</span></div>
+                <p class="mt-3 mb-3">
+                    Your digital marketplace for ready-to-use software projects,
+                    source code and developer resources.
+                </p>
+                <p class="mb-2">Business enquiries:</p>
+                <a class="footer-email" href="mailto:aklyte200@gmail.com">
+                    aklyte200@gmail.com
+                </a>
+            </div>
+
+            <div class="col-6 col-lg-2 col-md-6">
+                <h6 class="footer-heading">Explore</h6>
+                <a class="footer-link" href="{% url 'home' %}">Home</a><br>
+                <a class="footer-link" href="{% url 'product_list' %}">Projects</a><br>
+                <a class="footer-link" href="{% url 'cart_detail' %}">Shopping Cart</a><br>
+                <a class="footer-link" href="{% url 'about' %}">About AKLYTE</a>
+            </div>
+
+            <div class="col-6 col-lg-3 col-md-6">
+                <h6 class="footer-heading">Customer Support</h6>
+                <a class="footer-link" href="{% url 'contact' %}">Contact Us</a><br>
+                <a class="footer-link" href="{% url 'help_center' %}">Help Center</a><br>
+                <a class="footer-link" href="{% url 'faqs' %}">FAQs</a><br>
+                <a class="footer-link" href="{% url 'customer_dashboard' %}">My Account</a>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h6 class="footer-heading">Information</h6>
+                <a class="footer-link" href="{% url 'privacy_policy' %}">Privacy Policy</a><br>
+                <a class="footer-link" href="{% url 'contact' %}">Business Enquiries</a>
+
+                <h6 class="footer-heading mt-4">Follow AKLYTE</h6>
+                <div class="footer-social">
+                    <a href="https://www.linkedin.com/in/k-ansar/"
+                       target="_blank" rel="noopener noreferrer">LinkedIn</a>
+
+                    <!-- Replace this with the official AKLYTE Instagram profile URL -->
+                    <a href="https://www.instagram.com/"
+                       target="_blank" rel="noopener noreferrer">Instagram</a>
+
+                    <a href="https://github.com/aklyte-tech"
+                       target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+        </div>
+
+        <hr class="border-secondary my-4">
+
+        <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+            <span>© {% now "Y" %} AKLYTE. All rights reserved.</span>
+            <span>Built for developers.</span>
+        </div>
+    </div>
+</footer>
+
+<button class="back-to-top" id="backToTop" type="button"
+        aria-label="Back to top" title="Back to top">↑</button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const backToTop = document.getElementById("backToTop");
+
+    window.addEventListener("scroll", function () {
+        backToTop.classList.toggle("show", window.scrollY > 300);
+    });
+
+    backToTop.addEventListener("click", function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+</script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

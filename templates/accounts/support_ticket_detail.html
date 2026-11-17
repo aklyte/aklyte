@@ -1,0 +1,273 @@
+
+{% extends "accounts/base.html" %}
+
+{% block title %}Support Ticket #{{ ticket.pk }} — AKLYTE{% endblock %}
+
+{% block account_heading %}Support Ticket #{{ ticket.pk }}{% endblock %}
+
+{% block account_content %}
+
+<style>
+.ticket-detail-intro {
+    color: #71829a;
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 22px;
+}
+
+.ticket-detail-card {
+    background: #fff;
+    border: 1px solid #e1e9f4;
+    border-radius: 12px;
+    padding: 23px;
+    margin-bottom: 18px;
+}
+
+.ticket-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 13px;
+    margin-bottom: 18px;
+}
+
+.ticket-detail-title {
+    font-size: 19px;
+    font-weight: 800;
+    color: #102b50;
+    margin: 0 0 8px;
+}
+
+.ticket-detail-number {
+    color: #1769e0;
+}
+
+.ticket-detail-date {
+    color: #8292a9;
+    font-size: 12px;
+}
+
+.ticket-detail-status {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.ticket-open {
+    background: #eaf2ff;
+    color: #1769e0;
+}
+
+.ticket-pending {
+    background: #fff3d4;
+    color: #936000;
+}
+
+.ticket-closed {
+    background: #e5f8ee;
+    color: #087443;
+}
+
+.ticket-default {
+    background: #f0f2f5;
+    color: #596579;
+}
+
+.ticket-divider {
+    border: none;
+    border-top: 1px solid #e9eef5;
+    margin: 20px 0;
+}
+
+.ticket-message-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #8292a9;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 10px;
+}
+
+.ticket-message {
+    color: #354b68;
+    font-size: 14px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.response-card {
+    background: #f1f6ff;
+    border: 1px solid #dceaff;
+    border-radius: 12px;
+    padding: 22px;
+}
+
+.response-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.response-heading h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: #174a89;
+    margin: 0;
+}
+
+.response-label {
+    color: #71829a;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.response-message {
+    color: #294766;
+    font-size: 14px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.no-response {
+    background: #fff8e8;
+    border: 1px solid #f3e2b9;
+    border-radius: 10px;
+    padding: 17px;
+    color: #805b13;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.ticket-actions {
+    margin-top: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ticket-back {
+    display: inline-block;
+    padding: 10px 16px;
+    background: #1769e0;
+    color: white !important;
+    text-decoration: none !important;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ticket-back:hover {
+    background: #1054ba;
+}
+
+@media(max-width: 550px) {
+    .ticket-detail-card,
+    .response-card {
+        padding: 17px;
+    }
+
+    .ticket-detail-title {
+        font-size: 17px;
+    }
+}
+</style>
+
+<!-- INTRODUCTION -->
+<p class="ticket-detail-intro">
+    View your submitted support request and check the response
+    from the AKLYTE support team.
+</p>
+
+<!-- TICKET INFORMATION -->
+<div class="ticket-detail-card">
+
+    <div class="ticket-detail-header">
+
+        <div>
+            <h2 class="ticket-detail-title">
+                <span class="ticket-detail-number">
+                    #{{ ticket.pk }}
+                </span>
+                — {{ ticket.subject }}
+            </h2>
+
+            <div class="ticket-detail-date">
+                Submitted on
+                {{ ticket.created_at|date:"d M Y, H:i" }}
+            </div>
+        </div>
+
+        <span class="ticket-detail-status
+            {% if ticket.status == 'open' %}
+                ticket-open
+            {% elif ticket.status == 'pending' %}
+                ticket-pending
+            {% elif ticket.status == 'closed' %}
+                ticket-closed
+            {% else %}
+                ticket-default
+            {% endif %}">
+            {{ ticket.get_status_display }}
+        </span>
+
+    </div>
+
+    <hr class="ticket-divider">
+
+    <div class="ticket-message-label">
+        Your Message
+    </div>
+
+    <div class="ticket-message">
+        {{ ticket.message|linebreaksbr }}
+    </div>
+
+</div>
+
+<!-- SUPPORT RESPONSE -->
+<div class="response-card">
+
+    <div class="response-heading">
+        <h3>AKLYTE Support Response</h3>
+    </div>
+
+    {% if ticket.staff_response %}
+
+        <div class="response-label">
+            Response from our support team
+        </div>
+
+        <div class="response-message">
+            {{ ticket.staff_response|linebreaksbr }}
+        </div>
+
+    {% else %}
+
+        <div class="no-response">
+            <strong>Waiting for a response</strong>
+
+            <p style="margin:6px 0 0">
+                Our support team has not replied to this ticket yet.
+                Please check back later for updates.
+            </p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+<!-- NAVIGATION -->
+<div class="ticket-actions">
+
+    <a href="{% url 'support_ticket_list' %}"
+       class="ticket-back">
+        ← Back to Support Tickets
+    </a>
+
+</div>
+
+{% endblock %}

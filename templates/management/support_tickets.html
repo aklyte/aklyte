@@ -1,0 +1,795 @@
+{% extends "management/base.html" %}
+
+{% block title %}Help & Support — AKLYTE{% endblock %}
+
+{% block content %}
+
+<style>
+    .support-page {
+        width: 100%;
+    }
+
+    /* PAGE HEADER */
+
+    .page-title {
+        margin-bottom: 28px;
+    }
+
+    .page-title h1 {
+        color: #0b1f3a;
+        font-size: 32px;
+        font-weight: 850;
+        margin-bottom: 7px;
+    }
+
+    .page-title p {
+        color: #718096;
+        font-size: 16px;
+        margin: 0;
+    }
+
+    /* STATISTICS */
+
+    .support-stat {
+        position: relative;
+        height: 100%;
+        min-height: 120px;
+        padding: 22px;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+        overflow: hidden;
+    }
+
+    .support-stat::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: #1769e0;
+    }
+
+    .support-stat.open::before {
+        background: #dc2626;
+    }
+
+    .support-stat.progress::before {
+        background: #d97706;
+    }
+
+    .support-stat.resolved::before {
+        background: #16a34a;
+    }
+
+    .stat-label {
+        display: block;
+        margin-bottom: 13px;
+        color: #718096;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .stat-value {
+        display: block;
+        color: #0b1f3a;
+        font-size: 30px;
+        font-weight: 850;
+    }
+
+    /* FILTER PANEL */
+
+    .filter-panel {
+        padding: 22px;
+        margin-bottom: 27px;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+    }
+
+    .filter-heading {
+        margin-bottom: 17px;
+        color: #0b1f3a;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .filter-panel .form-control,
+    .filter-panel .form-select {
+        min-height: 45px;
+        border: 1px solid #dce5f0;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .filter-panel .form-control:focus,
+    .filter-panel .form-select:focus {
+        border-color: #1769e0;
+        box-shadow: 0 0 0 3px rgba(23, 105, 224, 0.10);
+    }
+
+    .search-btn,
+    .clear-btn {
+        min-height: 45px;
+        padding: 10px 19px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 750;
+    }
+
+    .search-btn {
+        background: #1769e0;
+        color: #ffffff;
+        border: 1px solid #1769e0;
+    }
+
+    .search-btn:hover {
+        background: #1256bd;
+        color: #ffffff;
+    }
+
+    .clear-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #ffffff;
+        color: #475569;
+        border: 1px solid #dce5f0;
+        text-decoration: none;
+    }
+
+    .clear-btn:hover {
+        background: #f1f5f9;
+        color: #0b1f3a;
+    }
+
+    /* REQUEST LIST HEADER */
+
+    .request-list-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 17px;
+    }
+
+    .request-list-header h2 {
+        margin: 0;
+        color: #0b1f3a;
+        font-size: 21px;
+        font-weight: 800;
+    }
+
+    .request-count {
+        padding: 7px 12px;
+        background: #eaf2ff;
+        color: #1769e0;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    /* TICKET CARD */
+
+    .ticket-card {
+        margin-bottom: 20px;
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+        transition: 0.2s ease;
+    }
+
+    .ticket-card:hover {
+        border-color: #c8dafa;
+        box-shadow: 0 6px 18px rgba(23, 105, 224, 0.06);
+    }
+
+    .ticket-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 22px 24px;
+        border-bottom: 1px solid #edf1f6;
+    }
+
+    .ticket-heading h3 {
+        margin-bottom: 8px;
+        color: #0b1f3a;
+        font-size: 18px;
+        font-weight: 850;
+        overflow-wrap: anywhere;
+    }
+
+    .ticket-number {
+        color: #1769e0;
+    }
+
+    .customer-info {
+        color: #94a3b8;
+        font-size: 13px;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    .customer-info strong {
+        color: #475569;
+        font-weight: 750;
+    }
+
+    .ticket-badges {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    /* STATUS BADGES */
+
+    .ticket-badge {
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .ticket-status {
+        background: #eaf2ff;
+        color: #1769e0;
+    }
+
+    .ticket-priority {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    /* TICKET MESSAGE */
+
+    .ticket-body {
+        padding: 22px 24px;
+    }
+
+    .message-box {
+        padding: 18px;
+        margin-bottom: 18px;
+        background: #f8faff;
+        border: 1px solid #edf1f7;
+        border-radius: 9px;
+    }
+
+    .message-heading {
+        display: block;
+        margin-bottom: 10px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .message-content {
+        margin-bottom: 13px;
+        color: #475569;
+        font-size: 14px;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    .ticket-timestamps {
+        color: #94a3b8;
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    .related-order {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 7px 11px;
+        background: #eaf2ff;
+        color: #1769e0;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    /* PREVIOUS RESPONSE */
+
+    .previous-response {
+        padding: 17px 19px;
+        margin-bottom: 20px;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-left: 4px solid #16a34a;
+        border-radius: 8px;
+    }
+
+    .previous-response strong {
+        display: block;
+        margin-bottom: 8px;
+        color: #166534;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .previous-response p {
+        margin: 0;
+        color: #475569;
+        font-size: 14px;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    /* RESPONSE FORM */
+
+    .response-section {
+        padding-top: 20px;
+        border-top: 1px solid #edf1f6;
+    }
+
+    .response-heading {
+        margin-bottom: 17px;
+        color: #0b1f3a;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .response-form label {
+        display: block;
+        margin-bottom: 8px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 750;
+    }
+
+    .response-form .form-select,
+    .response-form .form-control {
+        min-height: 44px;
+        border: 1px solid #dce5f0;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .response-form textarea.form-control {
+        min-height: 115px;
+        resize: vertical;
+        line-height: 1.7;
+    }
+
+    .response-form .form-select:focus,
+    .response-form .form-control:focus {
+        border-color: #1769e0;
+        box-shadow: 0 0 0 3px rgba(23, 105, 224, 0.10);
+    }
+
+    .save-response-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 19px;
+        background: #1769e0;
+        color: #ffffff;
+        border: 1px solid #1769e0;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 750;
+        transition: 0.2s ease;
+    }
+
+    .save-response-btn:hover {
+        background: #1256bd;
+        border-color: #1256bd;
+    }
+
+    /* EMPTY STATE */
+
+    .empty-panel {
+        padding: 55px 20px;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .empty-panel h3 {
+        margin-bottom: 9px;
+        color: #0b1f3a;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .empty-panel p {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 14px;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 768px) {
+        .page-title h1 {
+            font-size: 28px;
+        }
+
+        .filter-panel {
+            padding: 17px;
+        }
+
+        .ticket-header {
+            flex-direction: column;
+            padding: 18px;
+        }
+
+        .ticket-body {
+            padding: 18px;
+        }
+
+        .request-list-header h2 {
+            font-size: 18px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+        }
+    }
+</style>
+
+<div class="support-page">
+
+    <!-- PAGE HEADER -->
+
+    <div class="page-title">
+        <div>
+            <h1>Help & Support</h1>
+            <p>Manage customer requests and respond to their questions.</p>
+        </div>
+    </div>
+
+
+    <!-- SUPPORT STATISTICS -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-xl-3 col-md-6">
+            <div class="support-stat">
+                <span class="stat-label">Total Requests</span>
+                <strong class="stat-value">{{ total_tickets }}</strong>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="support-stat open">
+                <span class="stat-label">Open Requests</span>
+                <strong class="stat-value">{{ open_count }}</strong>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="support-stat progress">
+                <span class="stat-label">In Progress</span>
+                <strong class="stat-value">{{ in_progress_count }}</strong>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="support-stat resolved">
+                <span class="stat-label">Resolved</span>
+                <strong class="stat-value">{{ resolved_count }}</strong>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH AND FILTER -->
+
+    <section class="filter-panel">
+
+        <h2 class="filter-heading">Search and Filter Requests</h2>
+
+        <form method="get" class="d-flex flex-wrap gap-2">
+
+            <input
+                type="search"
+                name="q"
+                class="form-control"
+                style="max-width:350px; flex:1 1 220px;"
+                placeholder="Search customer, subject or order"
+                value="{{ query }}"
+            >
+
+            <select name="status"
+                    class="form-select"
+                    style="max-width:200px;">
+
+                <option value="">All statuses</option>
+
+                {% for value, label in status_choices %}
+                    <option value="{{ value }}"
+                        {% if selected_status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+
+            </select>
+
+            <select name="priority"
+                    class="form-select"
+                    style="max-width:200px;">
+
+                <option value="">All priorities</option>
+
+                {% for value, label in priority_choices %}
+                    <option value="{{ value }}"
+                        {% if selected_priority == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+
+            </select>
+
+            <button type="submit" class="btn search-btn">
+                Search
+            </button>
+
+            <a href="{% url 'management_support_tickets' %}"
+               class="clear-btn">
+                Clear Filters
+            </a>
+
+        </form>
+
+    </section>
+
+
+    <!-- REQUEST LIST HEADER -->
+
+    <div class="request-list-header">
+
+        <h2>Customer Requests</h2>
+
+        <span class="request-count">
+            {{ tickets|length }} matching requests
+        </span>
+
+    </div>
+
+
+    <!-- CUSTOMER REQUESTS -->
+
+    {% for ticket in tickets %}
+
+    <section class="ticket-card">
+
+        <!-- TICKET HEADER -->
+
+        <div class="ticket-header">
+
+            <div class="ticket-heading">
+
+                <h3>
+                    <span class="ticket-number">#{{ ticket.pk }}</span>
+                    — {{ ticket.subject }}
+                </h3>
+
+                <div class="customer-info">
+
+                    From
+                    <strong>{{ ticket.user.username }}</strong>
+
+                    ({{ ticket.user.email }})
+
+                </div>
+
+            </div>
+
+
+            <!-- STATUS AND PRIORITY -->
+
+            <div class="ticket-badges">
+
+                <span class="ticket-badge ticket-status">
+                    {{ ticket.get_status_display }}
+                </span>
+
+                <span class="ticket-badge ticket-priority">
+                    {{ ticket.get_priority_display }} Priority
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- TICKET BODY -->
+
+        <div class="ticket-body">
+
+            <!-- CUSTOMER MESSAGE -->
+
+            <div class="message-box">
+
+                <span class="message-heading">
+                    Customer Message
+                </span>
+
+                <div class="message-content">
+                    {{ ticket.message|linebreaksbr }}
+                </div>
+
+                <div class="ticket-timestamps">
+
+                    Submitted:
+                    {{ ticket.created_at|date:"d M Y, H:i" }}
+
+                    <br>
+
+                    Last Updated:
+                    {{ ticket.updated_at|date:"d M Y, H:i" }}
+
+                </div>
+
+                {% if ticket.order %}
+
+                    <span class="related-order">
+                        Related Order: {{ ticket.order.order_number }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- PREVIOUS STAFF RESPONSE -->
+
+            {% if ticket.staff_response %}
+
+            <div class="previous-response">
+
+                <strong>Previous Staff Response</strong>
+
+                <p>
+                    {{ ticket.staff_response|linebreaksbr }}
+                </p>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- RESPONSE FORM -->
+
+            <div class="response-section">
+
+                <h4 class="response-heading">
+                    Update Request & Reply to Customer
+                </h4>
+
+                <form method="post" class="response-form">
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="ticket_id"
+                        value="{{ ticket.pk }}"
+                    >
+
+                    <div class="row g-3 mb-3">
+
+                        <!-- STATUS -->
+
+                        <div class="col-md-6">
+
+                            <label for="status-{{ ticket.pk }}">
+                                Request Status
+                            </label>
+
+                            <select
+                                name="status"
+                                id="status-{{ ticket.pk }}"
+                                class="form-select"
+                            >
+
+                                {% for value, label in status_choices %}
+
+                                    <option value="{{ value }}"
+                                        {% if ticket.status == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- PRIORITY -->
+
+                        <div class="col-md-6">
+
+                            <label for="priority-{{ ticket.pk }}">
+                                Request Priority
+                            </label>
+
+                            <select
+                                name="priority"
+                                id="priority-{{ ticket.pk }}"
+                                class="form-select"
+                            >
+
+                                {% for value, label in priority_choices %}
+
+                                    <option value="{{ value }}"
+                                        {% if ticket.priority == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STAFF RESPONSE -->
+
+                    <div class="mb-3">
+
+                        <label for="response-{{ ticket.pk }}">
+                            Reply to Customer
+                        </label>
+
+                        <textarea
+                            name="staff_response"
+                            id="response-{{ ticket.pk }}"
+                            class="form-control"
+                            rows="4"
+                            maxlength="5000"
+                            placeholder="Write your response here..."
+                        >{{ ticket.staff_response }}</textarea>
+
+                    </div>
+
+
+                    <button type="submit" class="save-response-btn">
+                        Save Response & Update
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    {% empty %}
+
+    <!-- EMPTY STATE -->
+
+    <section class="empty-panel">
+
+        <h3>No Support Requests Found</h3>
+
+        <p>
+            Customer requests will appear here when submitted.
+        </p>
+
+    </section>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

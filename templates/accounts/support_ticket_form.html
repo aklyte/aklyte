@@ -1,0 +1,272 @@
+
+{% extends "accounts/base.html" %}
+
+{% block title %}Contact Support — AKLYTE{% endblock %}
+
+{% block account_heading %}Contact Support{% endblock %}
+
+{% block account_content %}
+
+<style>
+.support-form-intro {
+    color: #71829a;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 24px;
+}
+
+.support-form-card {
+    background: #fff;
+    border: 1px solid #e1e9f4;
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.support-form-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #102b50;
+    margin-bottom: 7px;
+}
+
+.support-form-subtitle {
+    color: #8292a9;
+    font-size: 13px;
+    margin-bottom: 23px;
+}
+
+.support-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    color: #263e60;
+    margin-bottom: 8px;
+}
+
+.support-input {
+    width: 100%;
+    border: 1px solid #dce5f1;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #102b50;
+    background: #fff;
+    margin-bottom: 19px;
+    outline: none;
+    transition: .2s;
+}
+
+.support-input:focus {
+    border-color: #1769e0;
+    box-shadow: 0 0 0 3px rgba(23, 105, 224, .1);
+}
+
+.support-input::placeholder {
+    color: #a0adbd;
+}
+
+textarea.support-input {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.7;
+}
+
+.support-field-note {
+    display: block;
+    color: #8292a9;
+    font-size: 11px;
+    margin-top: -12px;
+    margin-bottom: 19px;
+}
+
+.support-form-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 5px;
+}
+
+.support-submit {
+    background: #1769e0;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.support-submit:hover {
+    background: #1054ba;
+}
+
+.support-cancel {
+    display: inline-block;
+    padding: 11px 17px;
+    color: #536781;
+    background: #f2f5f9;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.support-cancel:hover {
+    background: #e7edf5;
+    color: #102b50;
+}
+
+.support-info {
+    background: #f1f6ff;
+    border: 1px solid #dceaff;
+    border-radius: 9px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.support-info strong {
+    display: block;
+    font-size: 13px;
+    color: #174a89;
+    margin-bottom: 5px;
+}
+
+.support-info p {
+    color: #71829a;
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+@media(max-width: 550px) {
+    .support-form-card {
+        padding: 18px;
+    }
+
+    .support-form-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .support-submit,
+    .support-cancel {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+
+<!-- INTRODUCTION -->
+<p class="support-form-intro">
+    Have a question or facing an issue with AKLYTE?
+    Submit a support request and our team can assist you.
+</p>
+
+<!-- SUPPORT FORM -->
+<div class="support-form-card">
+
+    <h2 class="support-form-title">
+        Submit a Support Request
+    </h2>
+
+    <p class="support-form-subtitle">
+        Provide the details below so we can understand your issue.
+    </p>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <!-- SUBJECT -->
+        <label class="support-label" for="support-subject">
+            Subject
+        </label>
+
+        <input
+            type="text"
+            id="support-subject"
+            class="support-input"
+            name="subject"
+            maxlength="160"
+            placeholder="Briefly describe your issue"
+            required
+        >
+
+        <span class="support-field-note">
+            Maximum 160 characters.
+        </span>
+
+        <!-- RELATED ORDER -->
+        <label class="support-label" for="support-order">
+            Related Order
+            <span style="font-weight:400;color:#8292a9">
+                (Optional)
+            </span>
+        </label>
+
+        <select
+            id="support-order"
+            class="support-input"
+            name="order_id"
+        >
+            <option value="">Choose an order</option>
+
+            {% for order in orders %}
+                <option value="{{ order.pk }}">
+                    {{ order.order_number }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+        <!-- MESSAGE -->
+        <label class="support-label" for="support-message">
+            Message
+        </label>
+
+        <textarea
+            id="support-message"
+            class="support-input"
+            name="message"
+            rows="6"
+            maxlength="5000"
+            placeholder="Explain your issue in detail..."
+            required
+        ></textarea>
+
+        <span class="support-field-note">
+            Maximum 5000 characters. Include relevant details about your issue.
+        </span>
+
+        <!-- ACTIONS -->
+        <div class="support-form-actions">
+
+            <button type="submit" class="support-submit">
+                Submit Support Ticket
+            </button>
+
+            <a href="{% url 'support_ticket_list' %}"
+               class="support-cancel">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+<!-- INFORMATION -->
+<div class="support-info">
+    <strong>What happens next?</strong>
+
+    <p>
+        After submitting your request, you can view your ticket
+        and follow its status from the Help & Support section
+        of your AKLYTE account.
+    </p>
+</div>
+
+{% endblock %}

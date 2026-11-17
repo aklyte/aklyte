@@ -1,0 +1,130 @@
+
+{% extends "base.html" %}
+
+{% block title %}Frequently Asked Questions — AKLYTE{% endblock %}
+
+{% block content %}
+<style>
+    .faq-hero {
+        background: linear-gradient(120deg, #08172f, #123d75);
+        color: white; text-align: center; padding: 65px 20px;
+    }
+    .faq-hero h1 { font-size: clamp(32px, 5vw, 45px); font-weight: 800; }
+    .faq-hero p { color: #d0def2; }
+    .faq-wrap { max-width: 900px; margin: auto; padding: 55px 20px 70px; }
+    .faq-item {
+        background: white; border: 1px solid #e3eaf4;
+        border-radius: 12px; margin-bottom: 13px; padding: 20px 23px;
+    }
+    .faq-item summary {
+        color: #123d75; font-weight: 750; cursor: pointer;
+        list-style: none; padding-right: 25px; position: relative;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after {
+        content: "+"; position: absolute; right: 0; top: -3px;
+        color: #2563eb; font-size: 23px;
+    }
+    .faq-item[open] summary::after { content: "−"; }
+    .faq-answer { color: #64748b; line-height: 1.8; padding-top: 15px; }
+</style>
+
+<section class="faq-hero">
+    <h1>Frequently Asked Questions</h1>
+    <p class="mb-0">Answers to common questions about AKLYTE.</p>
+</section>
+
+<section class="faq-wrap">
+    <details class="faq-item">
+        <summary>What is AKLYTE?</summary>
+        <div class="faq-answer">
+            AKLYTE is a digital marketplace where customers can explore and purchase
+            software projects and source code.
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>What do I receive after purchasing a project?</summary>
+        <div class="faq-answer">
+            After a successful purchase, the marketplace creates a delivery record
+            for the purchased project when repository details are configured.
+            The customer can receive an invitation to the corresponding private
+            GitHub repository. Available product documentation may also be provided.
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>Do I need a GitHub account?</summary>
+        <div class="faq-answer">
+            Yes. You need a GitHub account connected to your AKLYTE account to
+            receive repository access. Make sure you connect the GitHub account
+            where you want to receive the invitation.
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>How do I receive the GitHub invitation?</summary>
+        <div class="faq-answer">
+            After the purchase is successfully processed, AKLYTE sends an
+            invitation to the connected GitHub account when repository delivery
+            is configured. Check your GitHub notifications and the email
+            associated with your GitHub account.
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>How do I clone a purchased project?</summary>
+        <div class="faq-answer">
+            First accept the repository invitation on GitHub. Once your access
+            is active, use the repository's Git clone URL in your terminal.
+            For example:
+            <pre class="bg-light p-3 rounded mt-2"><code>git clone https://github.com/OWNER/REPOSITORY.git</code></pre>
+            Replace OWNER and REPOSITORY with the repository details shown for
+            your purchase.
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>Can I access every AKLYTE GitHub repository after one purchase?</summary>
+        <div class="faq-answer">
+            No. Repository access is associated with the specific project
+            purchased. It does not automatically grant access to other private
+            repositories in the AKLYTE organization.
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>Where can I find installation instructions?</summary>
+        <div class="faq-answer">
+            Check the product details and any documentation provided with your
+            purchased project. Requirements and setup steps may differ between
+            projects.
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>What should I do if I do not receive a GitHub invitation?</summary>
+        <div class="faq-answer">
+            Confirm that the correct GitHub account is connected, then check
+            your GitHub notifications and email. You can also check the GitHub
+            access section in your AKLYTE account or contact support.
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>How can I contact AKLYTE?</summary>
+        <div class="faq-answer">
+            Email
+            <a href="mailto:aklyte200@gmail.com">aklyte200@gmail.com</a>
+            or visit the <a href="{% url 'contact' %}">Contact Us</a> page.
+            Logged-in customers can also create a support ticket.
+        </div>
+    </details>
+
+    <div class="text-center mt-5">
+        <h3 class="fw-bold">Still need help?</h3>
+        <p class="text-secondary">Contact our team for assistance.</p>
+        <a href="{% url 'contact' %}" class="btn btn-primary px-4">Contact AKLYTE</a>
+    </div>
+</section>
+{% endblock %}

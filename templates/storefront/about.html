@@ -1,0 +1,93 @@
+
+{% extends "base.html" %}
+
+{% block title %}About AKLYTE — Software Projects{% endblock %}
+
+{% block content %}
+<style>
+    .info-hero {
+        background: linear-gradient(120deg, #08172f, #123d75);
+        color: white;
+        padding: 75px 20px;
+        text-align: center;
+    }
+    .info-hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; }
+    .info-hero p { color: #d0def2; max-width: 720px; margin: 15px auto 0; }
+    .about-wrap { max-width: 1100px; margin: auto; padding: 65px 20px; }
+    .about-card {
+        height: 100%; padding: 27px; background: white;
+        border: 1px solid #e5eaf2; border-radius: 15px;
+        box-shadow: 0 8px 25px #102a4d0a;
+    }
+    .about-card h3 { color: #123d75; font-size: 19px; font-weight: 750; }
+    .about-card p { color: #617086; line-height: 1.8; margin: 0; }
+    .about-heading { color: #0b1d38; font-weight: 800; }
+</style>
+
+<section class="info-hero">
+    <div class="container">
+        <h1>About AKLYTE</h1>
+        <p>
+            A digital marketplace focused on software projects, source code
+            and practical resources for developers and learners.
+        </p>
+    </div>
+</section>
+
+<section class="about-wrap">
+    <div class="row g-4 align-items-center mb-5">
+        <div class="col-lg-7">
+            <h2 class="about-heading mb-3">Who We Are</h2>
+            <p class="text-secondary lh-lg">
+                AKLYTE is a digital software marketplace where customers can
+                explore and purchase ready-to-use software projects. Our aim
+                is to make project source code and useful development resources
+                easier to access.
+            </p>
+            <p class="text-secondary lh-lg">
+                The marketplace brings together projects across areas such as
+                web development, Python, Django, MERN stack, artificial
+                intelligence and machine learning.
+            </p>
+        </div>
+        <div class="col-lg-5">
+            <div class="about-card">
+                <h3>Our Purpose</h3>
+                <p>
+                    To provide accessible software project resources that help
+                    developers and learners study implementations, understand
+                    project structure and build their technical skills.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="about-heading text-center mb-4">What We Offer</h2>
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="about-card">
+                <h3>Software Projects</h3>
+                <p>Explore projects across different programming languages and technologies.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="about-card">
+                <h3>Source Code Access</h3>
+                <p>Eligible purchases receive access to the corresponding private GitHub repository.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="about-card">
+                <h3>Project Documentation</h3>
+                <p>Access available installation instructions and project documentation.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <h2 class="about-heading">Explore Our Projects</h2>
+        <p class="text-secondary">Discover the available software projects in the AKLYTE marketplace.</p>
+        <a href="{% url 'product_list' %}" class="btn btn-primary px-4 py-2 mt-2">Browse Projects</a>
+    </div>
+</section>
+{% endblock %}

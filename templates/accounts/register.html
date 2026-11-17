@@ -1,0 +1,277 @@
+
+{% extends "accounts/base.html" %}
+
+{% block title %}Create Account — AKLYTE{% endblock %}
+
+{% block account_heading %}Create Your AKLYTE Account{% endblock %}
+
+{% block account_content %}
+
+<style>
+.register-intro {
+    color: #71829a;
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 24px;
+}
+
+.register-card {
+    max-width: 520px;
+    margin: auto;
+    background: #fff;
+    border: 1px solid #e1e9f4;
+    border-radius: 13px;
+    padding: 27px;
+}
+
+.register-card h2 {
+    color: #102b50;
+    font-size: 21px;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
+
+.register-subtitle {
+    color: #8292a9;
+    font-size: 13px;
+    margin-bottom: 23px;
+}
+
+.register-field {
+    margin-bottom: 18px;
+}
+
+.register-field label {
+    display: block;
+    color: #263e60;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
+
+.register-field input,
+.register-field select,
+.register-field textarea {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid #dce5f1;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #102b50;
+    background: white;
+    outline: none;
+    transition: .2s;
+}
+
+.register-field input:focus,
+.register-field select:focus,
+.register-field textarea:focus {
+    border-color: #1769e0;
+    box-shadow: 0 0 0 3px rgba(23, 105, 224, .1);
+}
+
+.register-field .helptext {
+    display: block;
+    color: #8292a9;
+    font-size: 11px;
+    line-height: 1.6;
+    margin-top: 7px;
+}
+
+.register-field ul.errorlist {
+    color: #b42318;
+    font-size: 12px;
+    padding-left: 18px;
+    margin: 6px 0 0;
+}
+
+.register-nonfield-errors {
+    background: #fff0ef;
+    border: 1px solid #ffd7d4;
+    color: #b42318;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 12px;
+    margin-bottom: 18px;
+}
+
+.register-submit {
+    width: 100%;
+    background: #1769e0;
+    color: white;
+    border: none;
+    padding: 13px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.register-submit:hover {
+    background: #1054ba;
+}
+
+.register-divider {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    color: #9aa8ba;
+    font-size: 12px;
+    margin: 22px 0;
+}
+
+.register-divider::before,
+.register-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e5ebf3;
+}
+
+.register-google {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dce5f1;
+    border-radius: 8px;
+    color: #263e60 !important;
+    text-decoration: none !important;
+    font-size: 13px;
+    font-weight: 700;
+    transition: .2s;
+}
+
+.register-google:hover {
+    background: #f7faff;
+    border-color: #1769e0;
+}
+
+.register-login {
+    text-align: center;
+    color: #71829a;
+    font-size: 13px;
+    margin-top: 23px;
+}
+
+.register-login a {
+    color: #1769e0;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.register-login a:hover {
+    text-decoration: underline;
+}
+
+.register-security {
+    background: #f1f6ff;
+    border: 1px solid #dceaff;
+    border-radius: 9px;
+    padding: 13px;
+    margin-top: 20px;
+}
+
+.register-security p {
+    color: #71829a;
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+@media(max-width: 500px) {
+    .register-card {
+        padding: 19px;
+    }
+}
+</style>
+
+<!-- INTRODUCTION -->
+<div class="register-intro">
+    Create your AKLYTE account to purchase software projects,
+    manage your orders and access your private GitHub repositories.
+</div>
+
+<div class="register-card">
+
+    <h2>Create Your Account</h2>
+
+    <p class="register-subtitle">
+        Fill in your details to get started with AKLYTE.
+    </p>
+
+    <!-- REGISTRATION FORM -->
+    <form method="post">
+
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="register-nonfield-errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+
+            <div class="register-field">
+
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.help_text %}
+                    <span class="helptext">
+                        {{ field.help_text|safe }}
+                    </span>
+                {% endif %}
+
+                {% for error in field.errors %}
+                    <p style="color:#b42318;font-size:12px;margin:6px 0 0">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+            </div>
+
+        {% endfor %}
+
+        <button type="submit" class="register-submit">
+            Create Account
+        </button>
+
+    </form>
+
+    <!-- DIVIDER -->
+    <div class="register-divider">
+        OR SIGN UP WITH
+    </div>
+
+    <!-- GOOGLE REGISTRATION -->
+    <a href="{% url 'google_login' %}"
+       class="register-google">
+        Sign Up with Google
+    </a>
+
+    <!-- LOGIN LINK -->
+    <div class="register-login">
+        Already have an account?
+        <a href="{% url 'customer_login' %}">
+            Sign In
+        </a>
+    </div>
+
+    <!-- SECURITY INFORMATION -->
+    <div class="register-security">
+        <p>
+            Your account helps you securely manage purchases,
+            payment history and private repository access.
+        </p>
+    </div>
+
+</div>
+
+{% endblock %}

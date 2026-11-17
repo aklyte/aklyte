@@ -1,0 +1,383 @@
+
+{% extends "accounts/base.html" %}
+
+{% block title %}My GitHub Access — AKLYTE{% endblock %}
+
+{% block account_heading %}My GitHub Repository Access{% endblock %}
+
+{% block account_content %}
+
+<style>
+.github-intro {
+    color: #71829a;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.github-access-card {
+    background: #fff;
+    border: 1px solid #e1e9f4;
+    border-radius: 13px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 5px 18px rgba(16, 42, 80, .035);
+}
+
+.access-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.access-project-name {
+    color: #102b50;
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
+
+.repo-name {
+    color: #71829a;
+    font-size: 13px;
+    word-break: break-word;
+}
+
+.access-status {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.status-active {
+    background: #e5f8ee;
+    color: #087443;
+}
+
+.status-failed {
+    background: #ffebeb;
+    color: #b42318;
+}
+
+.status-pending {
+    background: #fff3d4;
+    color: #936000;
+}
+
+.github-user {
+    margin-top: 18px;
+    padding: 12px 14px;
+    background: #f7faff;
+    border: 1px solid #e7eef8;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #526783;
+}
+
+.github-user strong {
+    color: #102b50;
+}
+
+.invitation-box {
+    margin-top: 17px;
+    background: #fff8e8;
+    border: 1px solid #f3e2b9;
+    color: #805b13;
+    border-radius: 9px;
+    padding: 15px;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.active-box {
+    margin-top: 18px;
+    background: #eaf8f0;
+    border: 1px solid #c8ecd7;
+    color: #087443;
+    padding: 13px 15px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.clone-section {
+    margin-top: 15px;
+}
+
+.clone-section label {
+    display: block;
+    color: #102b50;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 9px;
+}
+
+.clone-command {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #08172e;
+    color: #d8e7ff;
+    padding: 14px;
+    border-radius: 9px;
+}
+
+.clone-command code {
+    flex: 1;
+    color: #d8e7ff;
+    font-size: 12px;
+    word-break: break-all;
+    white-space: normal;
+}
+
+.copy-button {
+    flex-shrink: 0;
+    border: 1px solid #46648c;
+    background: #17365e;
+    color: white;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.copy-button:hover {
+    background: #24518a;
+}
+
+.clone-help {
+    color: #71829a;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 10px;
+}
+
+.delivery-error {
+    background: #fff0ef;
+    border: 1px solid #ffd7d4;
+    color: #b42318;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.refresh-button {
+    margin-top: 18px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #1769e0;
+    color: #1769e0;
+    background: white;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.refresh-button:hover {
+    background: #edf4ff;
+}
+
+.empty-access {
+    background: #f7faff;
+    border: 1px dashed #cbd9ec;
+    border-radius: 12px;
+    text-align: center;
+    padding: 35px 20px;
+}
+
+.empty-access h3 {
+    font-size: 17px;
+    font-weight: 800;
+    color: #102b50;
+    margin-bottom: 9px;
+}
+
+.empty-access p {
+    color: #71829a;
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+@media(max-width: 550px) {
+    .github-access-card {
+        padding: 17px;
+    }
+
+    .clone-command {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .copy-button {
+        align-self: flex-end;
+    }
+}
+</style>
+
+<!-- INTRODUCTION -->
+<div class="github-intro">
+    Manage your purchased source-code repositories here.
+    Repository access is marked as active only after GitHub confirms it.
+</div>
+
+<!-- REPOSITORY ACCESS LIST -->
+{% for access in accesses %}
+
+<div class="github-access-card">
+
+    <!-- PROJECT DETAILS -->
+    <div class="access-card-header">
+
+        <div>
+            <h2 class="access-project-name">
+                {{ access.order_item.product_name }}
+            </h2>
+
+            <div class="repo-name">
+                {{ access.repo_owner }}/{{ access.repo_name }}
+            </div>
+        </div>
+
+        <span class="access-status
+            {% if access.status == 'active' %}
+                status-active
+            {% elif access.status == 'failed' %}
+                status-failed
+            {% else %}
+                status-pending
+            {% endif %}">
+            {{ access.get_status_display }}
+        </span>
+
+    </div>
+
+    <!-- GITHUB USER -->
+    {% if access.github_username %}
+
+        <div class="github-user">
+            GitHub Account:
+            <strong>{{ access.github_username }}</strong>
+        </div>
+
+    {% endif %}
+
+    <!-- INVITATION PENDING -->
+    {% if access.status == 'invitation_sent' %}
+
+        <div class="invitation-box">
+            <strong>GitHub invitation sent</strong>
+
+            <p style="margin:7px 0 0">
+                Check your GitHub notifications or registered email.
+                Accept the repository invitation before continuing.
+                After accepting, return here and check your access status.
+            </p>
+        </div>
+
+    {% endif %}
+
+    <!-- ACTIVE REPOSITORY -->
+    {% if access.status == 'active' %}
+
+        <div class="active-box">
+            Repository access confirmed by GitHub.
+            You can now clone your purchased project.
+        </div>
+
+        <div class="clone-section">
+
+            <label>Git Clone Command</label>
+
+            <div class="clone-command">
+
+                <code id="clone-{{ access.pk }}">git clone https://github.com/{{ access.repo_owner }}/{{ access.repo_name }}.git</code>
+
+                <button type="button"
+                        class="copy-button"
+                        onclick="copyCloneCommand('clone-{{ access.pk }}', this)">
+                    Copy Command
+                </button>
+
+            </div>
+
+            <p class="clone-help">
+                Open Command Prompt, PowerShell or your terminal.
+                Paste the command and press Enter to clone the repository.
+                Make sure you are authenticated with the GitHub account
+                that has repository access.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+    <!-- DELIVERY ERROR -->
+    {% if access.last_error %}
+
+        <div class="delivery-error">
+            <strong>Delivery Note:</strong>
+            {{ access.last_error }}
+        </div>
+
+    {% endif %}
+
+    <!-- REFRESH STATUS -->
+    <form method="post"
+          action="{% url 'github_access_refresh' access.pk %}">
+
+        {% csrf_token %}
+
+        <button type="submit" class="refresh-button">
+            Check GitHub Access Status
+        </button>
+
+    </form>
+
+</div>
+
+{% empty %}
+
+<div class="empty-access">
+
+    <h3>No Repository Deliveries Yet</h3>
+
+    <p>
+        Your purchased source-code repositories will appear here
+        after a verified payment and successful GitHub delivery.
+        Once an invitation is sent, you can accept it through GitHub
+        and check your access status here.
+    </p>
+
+</div>
+
+{% endfor %}
+
+<!-- COPY COMMAND SCRIPT -->
+<script>
+function copyCloneCommand(elementId, button) {
+    const command = document.getElementById(elementId).textContent.trim();
+
+    navigator.clipboard.writeText(command).then(function () {
+        const originalText = button.textContent;
+
+        button.textContent = "Copied!";
+
+        setTimeout(function () {
+            button.textContent = originalText;
+        }, 1800);
+
+    }).catch(function () {
+        button.textContent = "Copy failed";
+    });
+}
+</script>
+
+{% endblock %}

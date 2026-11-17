@@ -1,0 +1,437 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Explore Projects — AKLYTE{% endblock %}
+
+{% block content %}
+
+<style>
+/* PRODUCT LIST PAGE */
+
+.product-list-page {
+    background: #ffffff;
+    color: #172033;
+    min-height: 70vh;
+}
+
+/* PAGE HERO */
+
+.catalog-hero {
+    background: linear-gradient(120deg, #08172f, #153d76);
+    color: #ffffff;
+    padding: 65px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.catalog-hero::after {
+    content: "";
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    right: 8%;
+    top: -180px;
+    background: #2878ff;
+    filter: blur(130px);
+    opacity: .25;
+}
+
+.catalog-hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+.catalog-label {
+    color: #82b5ff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.catalog-hero h1 {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin: 15px 0 12px;
+}
+
+.catalog-hero p {
+    color: #c4d2e8;
+    font-size: 16px;
+    margin: 0;
+    line-height: 1.7;
+}
+
+/* MAIN CONTENT */
+
+.catalog-content {
+    padding: 55px 0 80px;
+}
+
+/* SEARCH */
+
+.catalog-search {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 38px;
+}
+
+.catalog-search input {
+    min-height: 52px;
+    border: 1px solid #dce4ef;
+    border-radius: 8px;
+    padding: 12px 17px;
+    box-shadow: none;
+}
+
+.catalog-search input:focus {
+    border-color: #2878ff;
+    box-shadow: 0 0 0 3px rgba(40,120,255,.1);
+}
+
+.catalog-search .btn-search {
+    background: #2878ff;
+    border: 1px solid #2878ff;
+    color: white;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 700;
+    min-width: 115px;
+}
+
+.catalog-search .btn-search:hover {
+    background: #1261e6;
+}
+
+.catalog-search .btn-clear {
+    border: 1px solid #dce4ef;
+    color: #53647c;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.catalog-search .btn-clear:hover {
+    background: #f2f6fc;
+    color: #172033;
+}
+
+/* SIDEBAR */
+
+.catalog-sidebar {
+    background: #ffffff;
+    border: 1px solid #e7edf5;
+    border-radius: 12px;
+    padding: 22px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.sidebar-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #142440;
+    margin-bottom: 18px;
+}
+
+.sidebar-heading {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+    color: #8795a9;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.category-link {
+    display: block;
+    color: #53647c;
+    text-decoration: none;
+    padding: 11px 13px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: .2s;
+}
+
+.category-link:hover {
+    background: #edf4ff;
+    color: #2878ff;
+}
+
+.category-link.active {
+    background: #eaf2ff;
+    color: #1768e8;
+}
+
+/* PROJECT RESULTS */
+
+.catalog-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.catalog-results-header h2 {
+    color: #142440;
+    font-size: 21px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.catalog-results-label {
+    color: #8491a5;
+    font-size: 13px;
+}
+
+/* EMPTY STATE */
+
+.catalog-empty {
+    background: #f8faff;
+    border: 1px dashed #cbd8e8;
+    border-radius: 12px;
+    padding: 65px 20px;
+    text-align: center;
+}
+
+.catalog-empty h3 {
+    color: #142440;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.catalog-empty p {
+    color: #718096;
+    font-size: 14px;
+    margin: 10px 0 20px;
+}
+
+.catalog-empty a {
+    display: inline-block;
+    background: #2878ff;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 11px 22px;
+    border-radius: 7px;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 991px) {
+    .catalog-sidebar {
+        position: static;
+    }
+}
+
+@media (max-width: 576px) {
+    .catalog-hero {
+        padding: 48px 0;
+    }
+
+    .catalog-content {
+        padding: 35px 0 55px;
+    }
+
+    .catalog-search {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .catalog-search input {
+        grid-column: 1 / -1;
+    }
+
+    .catalog-search .btn-search,
+    .catalog-search .btn-clear {
+        width: 100%;
+    }
+
+    .catalog-results-header h2 {
+        font-size: 18px;
+    }
+}
+</style>
+
+
+<div class="product-list-page">
+
+    <!-- PAGE HERO -->
+    <section class="catalog-hero">
+        <div class="container">
+
+            <span class="catalog-label">
+                AKLYTE DIGITAL MARKETPLACE
+            </span>
+
+            <h1>
+                {% if active_category %}
+                    {{ active_category.name }}
+                {% else %}
+                    Explore Projects
+                {% endif %}
+            </h1>
+
+            <p>
+                Discover practical software projects, source code
+                and developer solutions.
+            </p>
+
+        </div>
+    </section>
+
+
+    <!-- CATALOG CONTENT -->
+    <section class="catalog-content">
+        <div class="container">
+
+            <!-- SEARCH FORM -->
+            <form method="get" class="catalog-search">
+
+                <input
+                    class="form-control"
+                    type="search"
+                    name="q"
+                    value="{{ query|default:'' }}"
+                    placeholder="Search projects by name or technology..."
+                    aria-label="Search projects"
+                >
+
+                <button type="submit" class="btn-search">
+                    Search
+                </button>
+
+                <a href="{% url 'product_list' %}" class="btn-clear">
+                    Clear
+                </a>
+
+            </form>
+
+
+            <div class="row g-4">
+
+                <!-- CATEGORY SIDEBAR -->
+                <aside class="col-lg-3">
+
+                    <div class="catalog-sidebar">
+
+                        <h2 class="sidebar-title">
+                            Browse Projects
+                        </h2>
+
+                        <div class="sidebar-heading">
+                            Categories
+                        </div>
+
+                        <div class="category-list">
+
+                            <a
+                                href="{% url 'product_list' %}"
+                                class="category-link {% if not active_category %}active{% endif %}"
+                            >
+                                All Projects
+                            </a>
+
+                            {% for category in categories %}
+
+                                <a
+                                    href="{% url 'category_detail' category.slug %}"
+                                    class="category-link {% if active_category and active_category.pk == category.pk %}active{% endif %}"
+                                >
+                                    {{ category.name }}
+                                </a>
+
+                            {% empty %}
+
+                                <p class="text-secondary small">
+                                    No categories available.
+                                </p>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </aside>
+
+
+                <!-- PROJECT GRID -->
+                <div class="col-lg-9">
+
+                    <div class="catalog-results-header">
+
+                        <h2>
+                            {% if active_category %}
+                                {{ active_category.name }}
+                            {% else %}
+                                All Projects
+                            {% endif %}
+                        </h2>
+
+                        <span class="catalog-results-label">
+                            Explore our collection
+                        </span>
+
+                    </div>
+
+
+                    <div class="row g-4">
+
+                        {% for product in products %}
+
+                            {% include "storefront/_product_card.html" %}
+
+                        {% empty %}
+
+                            <div class="col-12">
+
+                                <div class="catalog-empty">
+
+                                    <h3>
+                                        No projects found
+                                    </h3>
+
+                                    <p>
+                                        We couldn't find any published
+                                        projects matching your search.
+                                    </p>
+
+                                    <a href="{% url 'product_list' %}">
+                                        Browse All Projects
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}

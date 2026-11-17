@@ -1,0 +1,510 @@
+{% extends "management/base.html" %}
+
+{% block title %}Customers — AKLYTE{% endblock %}
+
+{% block content %}
+
+<style>
+    .customers-page {
+        width: 100%;
+    }
+
+    /* PAGE HEADER */
+
+    .page-title {
+        margin-bottom: 30px;
+    }
+
+    .page-title h1 {
+        color: #0b1f3a;
+        font-size: 32px;
+        font-weight: 850;
+        margin-bottom: 7px;
+    }
+
+    .page-title p {
+        color: #718096;
+        font-size: 16px;
+        margin: 0;
+    }
+
+    /* STATISTICS */
+
+    .customer-stat-card {
+        padding: 24px;
+        min-height: 125px;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-right: 5px solid #1769e0;
+        border-radius: 13px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+        transition: 0.2s ease;
+    }
+
+    .customer-stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 9px 22px rgba(15, 35, 65, 0.08);
+    }
+
+    .customer-stat-card span {
+        display: block;
+        margin-bottom: 13px;
+        color: #718096;
+        font-size: 15px;
+        font-weight: 650;
+    }
+
+    .customer-stat-card strong {
+        display: block;
+        color: #0b1f3a;
+        font-size: 29px;
+        font-weight: 850;
+    }
+
+    /* SEARCH PANEL */
+
+    .search-panel {
+        margin: 25px 0;
+        padding: 23px;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-radius: 13px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+    }
+
+    .search-heading {
+        margin-bottom: 15px;
+        color: #0b1f3a;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .customer-search-form {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .customer-search-input {
+        flex: 1;
+        min-width: 230px;
+        max-width: 450px;
+        min-height: 47px;
+        padding: 11px 15px;
+        border: 1px solid #d7e2f0;
+        border-radius: 8px;
+        color: #26364b;
+        font-size: 15px;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .customer-search-input:focus {
+        border-color: #1769e0;
+        box-shadow: 0 0 0 3px rgba(23, 105, 224, 0.12);
+    }
+
+    .search-btn,
+    .clear-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 750;
+        text-decoration: none;
+        transition: 0.2s ease;
+    }
+
+    .search-btn {
+        background: #1769e0;
+        color: #ffffff;
+        border: 1px solid #1769e0;
+    }
+
+    .search-btn:hover {
+        background: #1055bd;
+        color: #ffffff;
+    }
+
+    .clear-btn {
+        background: #ffffff;
+        color: #475569;
+        border: 1px solid #dce5f0;
+    }
+
+    .clear-btn:hover {
+        background: #f1f5f9;
+        color: #0b1f3a;
+    }
+
+    /* CUSTOMER TABLE PANEL */
+
+    .customer-panel {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e3eaf3;
+        border-radius: 13px;
+        box-shadow: 0 4px 14px rgba(15, 35, 65, 0.035);
+    }
+
+    .customer-panel-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 21px 24px;
+        border-bottom: 1px solid #e8edf5;
+    }
+
+    .customer-panel-heading h2 {
+        margin: 0;
+        color: #0b1f3a;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .customer-count {
+        padding: 7px 12px;
+        background: #eaf2ff;
+        color: #1769e0;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    /* TABLE */
+
+    .customer-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+    .customer-table thead th {
+        padding: 17px 20px;
+        background: #f8faff;
+        color: #64748b;
+        border-bottom: 1px solid #e8edf5;
+        font-size: 14px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .customer-table tbody td {
+        padding: 17px 20px;
+        color: #334155;
+        border-bottom: 1px solid #edf1f6;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .customer-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .customer-table tbody tr:hover {
+        background: #f8faff;
+    }
+
+    .customer-name {
+        display: block;
+        color: #0b1f3a;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .customer-fullname {
+        display: block;
+        margin-top: 5px;
+        color: #8492a6;
+        font-size: 13px;
+    }
+
+    .customer-email {
+        color: #475569;
+        overflow-wrap: anywhere;
+    }
+
+    .github-connected {
+        color: #15803d;
+        font-weight: 700;
+    }
+
+    .github-not-connected {
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    /* ACCOUNT STATUS */
+
+    .account-badge {
+        display: inline-block;
+        min-width: 70px;
+        padding: 7px 11px;
+        border-radius: 20px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .account-active {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .account-inactive {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    /* DETAILS BUTTON */
+
+    .view-details-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 13px;
+        background: #eaf2ff;
+        color: #1769e0;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 750;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: 0.2s ease;
+    }
+
+    .view-details-btn:hover {
+        background: #1769e0;
+        color: #ffffff;
+    }
+
+    /* EMPTY STATE */
+
+    .empty-state {
+        padding: 45px 20px !important;
+        color: #94a3b8 !important;
+        text-align: center;
+        font-size: 15px !important;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 768px) {
+        .page-title h1 {
+            font-size: 28px;
+        }
+
+        .customer-stat-card {
+            padding: 20px;
+        }
+
+        .customer-panel-heading {
+            padding: 17px;
+        }
+
+        .customer-search-form {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .customer-search-input {
+            max-width: none;
+            width: 100%;
+        }
+
+        .search-btn,
+        .clear-btn {
+            width: 100%;
+        }
+
+        .customer-table thead th,
+        .customer-table tbody td {
+            padding: 12px;
+            font-size: 13px;
+        }
+    }
+</style>
+
+<div class="customers-page">
+
+    <!-- PAGE HEADER -->
+
+    <div class="page-title">
+        <div>
+            <h1>Customers</h1>
+            <p>Manage registered customers and monitor their marketplace activity.</p>
+        </div>
+    </div>
+
+
+    <!-- CUSTOMER STATISTICS -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4 col-sm-6">
+            <div class="customer-stat-card">
+                <span>Matching Customers</span>
+                <strong>{{ total_customers }}</strong>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <section class="search-panel">
+
+        <h2 class="search-heading">Search Customers</h2>
+
+        <form method="get" class="customer-search-form">
+
+            <input
+                type="search"
+                name="q"
+                class="customer-search-input"
+                placeholder="Search username, name or email"
+                value="{{ query }}"
+            >
+
+            <button type="submit" class="search-btn">
+                Search
+            </button>
+
+            <a href="{% url 'management_customers' %}"
+               class="clear-btn">
+                Clear Search
+            </a>
+
+        </form>
+
+    </section>
+
+
+    <!-- CUSTOMER LIST -->
+
+    <section class="customer-panel">
+
+        <div class="customer-panel-heading">
+
+            <h2>Customer List</h2>
+
+            <span class="customer-count">
+                {{ total_customers }} Customers
+            </span>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="customer-table">
+
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Email</th>
+                        <th>GitHub</th>
+                        <th>Joined</th>
+                        <th>Account</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for customer in customers %}
+
+                    <tr>
+
+                        <td>
+                            <span class="customer-name">
+                                {{ customer.username }}
+                            </span>
+
+                            <span class="customer-fullname">
+                                {{ customer.get_full_name|default:"" }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="customer-email">
+                                {{ customer.email|default:"—" }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            {% if customer.customer_profile.github_username %}
+
+                                <span class="github-connected">
+                                    {{ customer.customer_profile.github_username }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="github-not-connected">
+                                    Not connected
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ customer.date_joined|date:"d M Y" }}
+                        </td>
+
+                        <td>
+
+                            {% if customer.is_active %}
+
+                                <span class="account-badge account-active">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="account-badge account-inactive">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            <a class="view-details-btn"
+                               href="{% url 'management_customer_detail' customer.pk %}">
+                                View Details
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            No customers found. Try changing your search.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}
