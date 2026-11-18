@@ -105,7 +105,10 @@ def product_detail(request, slug):
 
 def category_detail(request, slug):
     category = get_object_or_404(Category, slug=slug, is_active=True)
-    products = Product.objects.filter(category=category, status=Product.PUBLISHED).select_related("category")
+    products = Product.objects.filter(
+    Q(category=category) | Q(additional_categories=category),
+    status=Product.PUBLISHED
+    ).select_related("category").distinct()
     return render(request, "storefront/product_list.html", {
         "products": products, "categories": Category.objects.filter(is_active=True), "active_category": category
     })

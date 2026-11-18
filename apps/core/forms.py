@@ -33,6 +33,30 @@ class ProductForm(forms.ModelForm):
         if price is not None and discount is not None and discount >= price:
             self.add_error("discount_price", "Discount price must be lower than regular price.")
         return cleaned
+    def save(self, commit=True):
+        product = super().save(commit=False)
+
+        if commit:
+            product.save()
+            self.save_m2m()
+
+            if product.category.slug == "django-projects":
+                python_category = Category.objects.filter(
+                    slug="python-projects"
+                ).first()
+
+                if python_category:
+                    product.additional_categories.add(python_category)
+
+            elif product.category.slug == "machine-learning":
+                ai_category = Category.objects.filter(
+                    slug="ai-projects"
+                ).first()
+
+                if ai_category:
+                    product.additional_categories.add(ai_category)
+
+        return product
 
 
 from django.core.exceptions import ValidationError

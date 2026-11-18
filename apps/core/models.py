@@ -30,6 +30,11 @@ class Product(models.Model):
     name = models.CharField(max_length=180)
     slug = models.SlugField(max_length=200, unique=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="products")
+    additional_categories = models.ManyToManyField(
+    Category,
+    blank=True,
+    related_name="additional_products"
+    )
     short_description = models.CharField(max_length=260)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
