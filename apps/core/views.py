@@ -833,7 +833,7 @@ def checkout_review(request):
                 coupon.save(update_fields=["usage_count"])
             request.session.pop("aklyte_coupon_code", None)
             cart.items.all().delete()
-        messages.success(request, f"Order {order.order_number} was created. Payment is not yet enabled.")
+        messages.success(request, f"Order {order.order_number} was created. Please complete your payment.")
         return redirect("order_detail", order_number=order.order_number)
     return render(request, "commerce/checkout.html", {"cart": cart, "items": items, "subtotal": subtotal, "discount": discount, "total": total, "coupon_code": coupon_code})
 
@@ -1288,50 +1288,86 @@ def _amount_to_paise(amount):
 def _razorpay_auth():
     return (settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
 
-def _mark_payment_captured(payment, provider_payment_id, signature_verified=False, webhook_verified=False, raw_event=None):
-    # Idempotent: repeated callback/webhook events cannot create duplicate payments or orders.
+
+def _mark_payment_captured(
+    payment,
+    provider_payment_id,
+    signature_verified=False,
+    webhook_verified=False,
+    raw_event=None,
+):
+    """Mark a verified payment as captured and trigger fulfillment once per order."""
     with transaction.atomic():
         locked = Payment.objects.select_for_update().get(pk=payment.pk)
+
         if locked.status != Payment.CAPTURED:
             locked.status = Payment.CAPTURED
-            locked.provider_payment_id = provider_payment_id or locked.provider_payment_id
-            locked.signature_verified = locked.signature_verified or signature_verified
-            locked.webhook_verified = locked.webhook_verified or webhook_verified
+            locked.provider_payment_id = (
+                provider_payment_id or locked.provider_payment_id
+            )
+            locked.signature_verified = (
+                locked.signature_verified or signature_verified
+            )
+            locked.webhook_verified = (
+                locked.webhook_verified or webhook_verified
+            )
             if raw_event is not None:
                 locked.raw_event = raw_event
             locked.save()
         else:
             changed = False
+
             if provider_payment_id and not locked.provider_payment_id:
                 locked.provider_payment_id = provider_payment_id
                 changed = True
+
             if signature_verified and not locked.signature_verified:
                 locked.signature_verified = True
                 changed = True
+
             if webhook_verified and not locked.webhook_verified:
                 locked.webhook_verified = True
                 changed = True
+
             if raw_event is not None:
                 locked.raw_event = raw_event
                 changed = True
+
             if changed:
                 locked.save()
+
         order = Order.objects.select_for_update().get(pk=locked.order_id)
-        if order.status != Order.PAID:
+
+        # Only the transaction that changes the order to PAID triggers fulfillment.
+        newly_paid = order.status != Order.PAID
+
+        if newly_paid:
             order.status = Order.PAID
             order.save(update_fields=["status", "updated_at"])
-        # Delivery is idempotent and happens only after a verified captured payment.
-        from .github_delivery import deliver_paid_order
-        from .notifications import send_customer_email
-        def _after_payment_commit(order_id=order.pk):
-            paid_order = Order.objects.select_related("user").get(pk=order_id)
-            send_customer_email(
-                paid_order.user,
-                f"Payment confirmed — {paid_order.order_number}",
-                f"Hello {paid_order.user.username},\\n\\nWe have confirmed your payment for AKLYTE order {paid_order.order_number}.\\nTotal: {paid_order.currency} {paid_order.total}\\n\\nYou can view your order and repository delivery status from your AKLYTE account.",
-            )
-            deliver_paid_order(paid_order)
-        transaction.on_commit(_after_payment_commit)
+
+            from .github_delivery import deliver_paid_order
+            from .notifications import send_customer_email
+
+            def _after_payment_commit(order_id=order.pk):
+                paid_order = Order.objects.select_related("user").get(pk=order_id)
+
+                send_customer_email(
+                    paid_order.user,
+                    f"Payment confirmed — {paid_order.order_number}",
+                    (
+                        f"Hello {paid_order.user.username},\n\n"
+                        f"We have confirmed your payment for AKLYTE order "
+                        f"{paid_order.order_number}.\n"
+                        f"Total: {paid_order.currency} {paid_order.total}\n\n"
+                        "You can view your order and repository delivery "
+                        "status from your AKLYTE account."
+                    ),
+                )
+
+                deliver_paid_order(paid_order)
+
+            transaction.on_commit(_after_payment_commit)
+
     return locked
 
 @user_passes_test(lambda u: u.is_authenticated and u.is_active, login_url="customer_login")
@@ -1448,54 +1484,144 @@ def razorpay_payment_callback(request, order_number):
         messages.error(request, "We could not confirm the payment status with Razorpay. Your order has not been marked paid.")
     return redirect("order_detail", order_number=order.order_number)
 
+
 @csrf_exempt
 @require_POST
 def razorpay_webhook(request):
     secret = settings.RAZORPAY_WEBHOOK_SECRET
+
     if not secret:
         return HttpResponseBadRequest("Webhook secret is not configured.")
+
     supplied = request.headers.get("X-Razorpay-Signature", "")
-    expected = hmac.new(secret.encode("utf-8"), request.body, hashlib.sha256).hexdigest()
+    expected = hmac.new(
+        secret.encode("utf-8"),
+        request.body,
+        hashlib.sha256,
+    ).hexdigest()
+
     if not supplied or not hmac.compare_digest(expected, supplied):
         return HttpResponseBadRequest("Invalid webhook signature.")
+
     try:
         event = json.loads(request.body.decode("utf-8"))
         event_name = event.get("event", "")
-        entity = event.get("payload", {}).get("payment", {}).get("entity", {})
-        provider_order_id = entity.get("order_id", "")
-        provider_payment_id = entity.get("id", "")
+        payload = event.get("payload", {})
+
+        if not isinstance(payload, dict):
+            return HttpResponseBadRequest("Invalid webhook payload.")
+
     except (ValueError, UnicodeDecodeError, AttributeError):
         return HttpResponseBadRequest("Invalid webhook payload.")
 
-    if event_name in ("payment.captured", "order.paid") and provider_order_id:
-        payment = Payment.objects.filter(provider_order_id=provider_order_id).first()
-        if payment:
-            # Confirm amount/currency against the order before accepting event.
-            if entity.get("amount") is not None and int(entity["amount"]) != payment.amount_paise:
-                return HttpResponseBadRequest("Payment amount mismatch.")
-            if entity.get("currency") and entity["currency"] != payment.currency:
-                return HttpResponseBadRequest("Payment currency mismatch.")
-            _mark_payment_captured(
-                payment, provider_payment_id, webhook_verified=True, raw_event=event
-            )
-    elif event_name == "payment.failed" and provider_order_id:
-        payment = Payment.objects.filter(provider_order_id=provider_order_id).first()
-        if payment and payment.status != Payment.CAPTURED:
-            payment.status = Payment.FAILED
-            payment.failure_reason = str(entity.get("error_description", "Payment failed"))[:500]
-            payment.raw_event = event
-            payment.save()
-            if payment.order.status == Order.PENDING_PAYMENT:
-                payment.order.status = Order.PAYMENT_FAILED
-                payment.order.save(update_fields=["status", "updated_at"])
-            from .notifications import send_customer_email
-            send_customer_email(
-                payment.order.user,
-                f"Payment not completed — {payment.order.order_number}",
-                f"Hello {payment.order.user.username},\\n\\nRazorpay reported that payment for AKLYTE order {payment.order.order_number} was not completed. You can revisit your order in your AKLYTE account and try again.\\n\\nNo GitHub repository access has been granted for this unpaid order.",
-            )
-    return HttpResponse("ok", status=200)
+    if event_name == "payment.captured":
+        entity = payload.get("payment", {}).get("entity", {})
 
+        if not isinstance(entity, dict):
+            return HttpResponseBadRequest("Invalid payment entity.")
+
+        provider_order_id = entity.get("order_id")
+        provider_payment_id = entity.get("id")
+        amount = entity.get("amount")
+        currency = entity.get("currency")
+
+        if not all((provider_order_id, provider_payment_id, amount, currency)):
+            return HttpResponseBadRequest("Incomplete captured payment details.")
+
+        try:
+            amount = int(amount)
+        except (ValueError, TypeError):
+            return HttpResponseBadRequest("Invalid payment amount.")
+
+        payment = Payment.objects.filter(
+            provider_order_id=provider_order_id
+        ).first()
+
+        if not payment:
+            return HttpResponse("ok", status=200)
+
+        if amount != payment.amount_paise:
+            return HttpResponseBadRequest("Payment amount mismatch.")
+
+        if currency != payment.currency:
+            return HttpResponseBadRequest("Payment currency mismatch.")
+
+        if (
+            payment.provider_payment_id
+            and payment.provider_payment_id != provider_payment_id
+        ):
+            return HttpResponseBadRequest("Payment ID mismatch.")
+
+        _mark_payment_captured(
+            payment,
+            provider_payment_id,
+            webhook_verified=True,
+            raw_event=event,
+        )
+
+    elif event_name == "payment.failed":
+        entity = payload.get("payment", {}).get("entity", {})
+
+        if not isinstance(entity, dict):
+            return HttpResponseBadRequest("Invalid payment entity.")
+
+        provider_order_id = entity.get("order_id")
+
+        if not provider_order_id:
+            return HttpResponseBadRequest("Missing Razorpay order ID.")
+
+        with transaction.atomic():
+            payment = Payment.objects.select_for_update().filter(
+                provider_order_id=provider_order_id
+            ).first()
+
+            if payment:
+                order = Order.objects.select_for_update().get(
+                    pk=payment.order_id
+                )
+
+                if (
+                    payment.status != Payment.CAPTURED
+                    and order.status != Order.PAID
+                    and payment.status != Payment.FAILED
+                ):
+                    payment.status = Payment.FAILED
+                    payment.failure_reason = str(
+                        entity.get("error_description", "Payment failed")
+                    )[:500]
+                    payment.raw_event = event
+                    payment.save()
+
+                    if order.status == Order.PENDING_PAYMENT:
+                        order.status = Order.PAYMENT_FAILED
+                        order.save(
+                            update_fields=["status", "updated_at"]
+                        )
+
+                    from .notifications import send_customer_email
+
+                    def notify_failure(order_id=order.pk):
+                        failed_order = Order.objects.select_related(
+                            "user"
+                        ).get(pk=order_id)
+
+                        send_customer_email(
+                            failed_order.user,
+                            f"Payment not completed — {failed_order.order_number}",
+                            (
+                                f"Hello {failed_order.user.username},\n\n"
+                                f"Razorpay reported that payment for AKLYTE "
+                                f"order {failed_order.order_number} failed.\n\n"
+                                "You can revisit your order in your AKLYTE "
+                                "account and try again.\n\n"
+                                "No GitHub repository access has been "
+                                "granted for this unpaid order."
+                            ),
+                        )
+
+                    transaction.on_commit(notify_failure)
+
+    return HttpResponse("ok", status=200)
 
 @user_passes_test(lambda u: u.is_authenticated and u.is_active, login_url="customer_login")
 def github_access_list(request):

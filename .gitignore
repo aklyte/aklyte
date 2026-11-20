@@ -23,3 +23,10 @@ aklyte-backup/
 
 # Node
 node_modules/
+
+# Collected static files
+staticfiles/
+
+# Local backups
+db.sqlite3.backup
+media_backup/

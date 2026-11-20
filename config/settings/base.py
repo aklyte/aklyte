@@ -1,6 +1,7 @@
 from pathlib import Path
 import environ
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = environ.Env(DJANGO_DEBUG=(bool, False))
 environ.Env.read_env(BASE_DIR / ".env")
@@ -9,18 +10,32 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", default="")
 if not SECRET_KEY or SECRET_KEY.startswith("replace-with"):
     raise RuntimeError("Set a real DJANGO_SECRET_KEY in your .env file.")
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
+ALLOWED_HOSTS = env.list(
+    "DJANGO_ALLOWED_HOSTS",
+    default=["127.0.0.1", "localhost"]
+)
+
+CSRF_TRUSTED_ORIGINS = env.list(
+    "DJANGO_CSRF_TRUSTED_ORIGINS",
+    default=[]
+)
 TIME_ZONE = env("TIME_ZONE", default="Asia/Kolkata")
 LANGUAGE_CODE = "en-us"
 USE_I18N = True
 USE_TZ = True
 
 INSTALLED_APPS = [
-    "django.contrib.auth", "django.contrib.contenttypes", "django.contrib.sessions",
-    "django.contrib.messages", "django.contrib.staticfiles", "apps.core",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "storages",
+    "apps.core",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -97,3 +112,34 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 DATA_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
+
+# Cloudflare R2 Storage Configuration
+
+R2_ACCOUNT_ID = env("R2_ACCOUNT_ID", default="")
+R2_ACCESS_KEY_ID = env("R2_ACCESS_KEY_ID", default="")
+R2_SECRET_ACCESS_KEY = env("R2_SECRET_ACCESS_KEY", default="")
+R2_BUCKET_NAME = env("R2_BUCKET_NAME", default="aklyte-project-files")
+R2_ENDPOINT_URL = env("R2_ENDPOINT_URL", default="")
+
+# S3-compatible storage configuration
+
+if R2_ACCOUNT_ID and R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY and R2_ENDPOINT_URL:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+            "OPTIONS": {
+                "access_key": R2_ACCESS_KEY_ID,
+                "secret_key": R2_SECRET_ACCESS_KEY,
+                "bucket_name": R2_BUCKET_NAME,
+                "endpoint_url": R2_ENDPOINT_URL,
+                "region_name": "auto",
+                "default_acl": None,
+                "querystring_auth": True,
+                "file_overwrite": False,
+                "signature_version": "s3v4",
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }

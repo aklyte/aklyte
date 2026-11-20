@@ -93,8 +93,14 @@ from django.conf import settings
 private_document_storage = FileSystemStorage(location=settings.BASE_DIR / "private_docs")
 
 class ProductDocument(models.Model):
-    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="document")
-    pdf = models.FileField(upload_to="products/private_docs/", storage=private_document_storage)
+    product = models.OneToOneField(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="document"
+    )
+    pdf = models.FileField(
+        upload_to="products/private_docs/"
+    )
     uploaded_at = models.DateTimeField(auto_now=True)
 
 class CustomerProfile(models.Model):
